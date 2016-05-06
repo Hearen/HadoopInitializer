@@ -2,9 +2,8 @@
 -----
 
 #####################################################################################
-#### Author: LHearen
-#### E-mail: LHearen@gmail.com   Time: Fri, 2016-05-06 09:18
-#### Description : 
+##### Author: LHearen
+##### E-mail: LHearen@gmail.com   Time: Fri, 2016-05-06 09:18
 The collection of all the scripts are used to configure the working 
 environment of hadoop in CentOS 7.1 including all the following steps:
 #####################################################################################
