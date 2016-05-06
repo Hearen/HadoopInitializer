@@ -1,9 +1,11 @@
 #!/bin/bash
-##########################
-# Author: LHearen 
-# E-mail: LHearen@126.com 
-##########################
-#When using DHCP login process is quite essential to access external network
+#####################################################################################
+#Author      : LHearen
+#E-mail      : LHearen@gmail.com
+#Time        : Thu, 2016-05-05 11:12
+#Description : When using DHCP login process is quite essential to access external network
+#####################################################################################
+
 function login_network {
     userName="luosonglei14"
     password=${2-111111}
