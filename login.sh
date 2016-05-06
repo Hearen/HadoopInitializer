@@ -34,15 +34,15 @@ function login_network {
     done
 }
 
-clear
-echo "Using a fixed account to login - simulating browser login process."
-tput setaf 6
-echo "[Usage: UserName, Password[default: 111111]]"
-tput sgr0
-echo
-read -p "UserName:" userName
-tput setaf 6
-echo "Press Enter to use default password 111111"
-tput sgr0
-read -p "Password:" password
-login_network $userName $password
+#clear
+#echo "Using a fixed account to login - simulating browser login process."
+#tput setaf 6
+#echo "[Usage: UserName, Password[default: 111111]]"
+#tput sgr0
+#echo
+#read -p "UserName:" userName
+#tput setaf 6
+#echo "Press Enter to use default password 111111"
+#tput sgr0
+#read -p "Password:" password
+#login_network $userName $password

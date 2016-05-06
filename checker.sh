@@ -87,11 +87,11 @@ function check_network {
 #Check the network and try to fix it
 ####################################
 function check_fix_network {
-return_code=`check_network "baidu.com"`
-   if [ $return_code -eq 200 ]
-   then
+    return_code=`check_network "baidu.com"`
+    if [ $return_code -eq 200 ]
+    then
         echo "Network available"
-   else
+    else
         echo "Connection error!"
         echo "Trying to fix the network..."
         service network restart > /dev/null  
@@ -111,7 +111,7 @@ return_code=`check_network "baidu.com"`
             echo "Leaving the script..."
             return 1
         fi 
-   fi
+    fi
 }
 
 #check_fix_network
