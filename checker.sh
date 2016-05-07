@@ -147,14 +147,14 @@ function check_package {
         echo "To run the program properly, we have to install it first."
         echo "Installing $package ..."
         echo
-        yum install -y $package 
+        yum install -y $package $1>/dev/null $2>/dev/null
         if [ $? -eq 0 ]
         then
             echo "$package installed successfully!"
             return 0
         else
             echo "Failed installing $package ."
-            echo "Make sure your internet is connected."
+            echo "Make sure your internet is connected and re-try later."
             echo
             return 1
         fi
@@ -178,12 +178,7 @@ function check_essential_packages {
     then 
         exit_code=1
     fi
-    check_package "createrepo" 
-    if [ $? -gt 0 ]
-    then 
-        exit_code=1
-    fi
-    check_package "genisoimage"
+    check_package "openssh" 
     if [ $? -gt 0 ]
     then 
         exit_code=1
@@ -193,3 +188,35 @@ function check_essential_packages {
 
 #check_essential_packages 
 
+function ip_checker {
+    local ip=$1
+    result=`echo $ip | gawk --re-interval '/^([0-9]{1,3}|\*)\.([0-9]{1,3}|\*)\.([0-9]{1,3}|\*)\.([0-9]{1,3}|\*)$/'`
+    #echo $result
+    if [ -z "$result" ]
+    then
+        return 1
+    fi
+
+    tmp=`echo $ip | sed "s/\./ /g; s/\*/a/g"`
+    #echo ${tmp[*]}
+    for a in $tmp
+    do
+        #echo $a
+        if [ $a != "a" ] && [ $a -gt 255 ] 
+        then
+            return 1
+        fi
+    done
+    return 0
+}
+#while true
+#do
+    #read -p "Input the ip to test: " ip
+    #ip_checker $ip
+    #if [ $? -eq 0 ]
+    #then
+        #echo "Correct!"
+    #else
+        #echo "Wrong!"
+    #fi
+#done
