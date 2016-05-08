@@ -173,11 +173,6 @@ function check_package {
 ##############################################
 function check_essential_packages {
     exit_code=0
-    check_package "rsync"
-    if [ $? -gt 0 ]
-    then 
-        exit_code=1
-    fi
     check_package "openssh" 
     if [ $? -gt 0 ]
     then 
@@ -220,3 +215,17 @@ function ip_checker {
         #echo "Wrong!"
     #fi
 #done
+
+#Check whether jdk 1.8 installed or not
+#return 1 if not installed otherwise return 0;
+function java_checker {
+    ret=$(java -version 2>&1 | sed -n "/1.8/p")
+    if [ "$ret" == "" ]
+    then
+        echo "java 1.8 not installed"
+        return 1
+    else
+        echo "java 1.8 already installed"
+        return 0
+    fi
+}
