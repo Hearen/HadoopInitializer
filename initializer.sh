@@ -16,41 +16,27 @@
 
 user_name="hadoop"
 
-#Ensure the role is root to execute some privileged commands;
-#check_permission 
-#if [ $? -eq 0  ] 
-#then 
-    #echo "Root Permission Granted." 
-#else 
-    #echo "Permission denied!" 
-    #echo "Make sure you are running this program in root or sudo command." 
-    #echo "Leaving the program..."
-    #exit 1
-#fi
-
 #Root privilege required
+#add a new user for each host in the ips file and enable sudo command;
 function add_user {
     HADOOP_USER=$1
-    echo "Adding a user for later use: "
-    useradd $HADOOP_USER
-    passwd $HADOOP_USER
-    usermod -aG wheel $HADOOP_USER
-    echo "User $HADOOP_USER added to group wheel successfully!"
-    echo "Now you can use sudo to run privileged commands."
+    ip_dir="$2"
+    for ip in $(cat $ip_dir)
+    do
+        ip_checker $ip
+        if [ $? -gt 0 ]
+        then
+            echo "Wrong IP, check the IPs in $dir";
+            return 1
+        fi
+        echo "Adding a user for $ip"
+        ssh $ip "useradd $HADOOP_USER &&  passwd $HADOOP_USER && usermod -aG wheel $HADOOP_USER"
+        echo "User $HADOOP_USER added to $ip group wheel successfully!"
+        echo "Now you can use sudo to run privileged commands in $ip." #if till now the sudo command is not available, you might check /etc/sudoers and uncomment wheel group;
+    done
 }
 
-add_user $user_name
-
-
-
-#download and configure jdk;#
-
-#Ensure the network connection is okay;
-#check_fix_network
-#if [ $? -eq 0 ]
-#then
-    #echo "Connection Okay!"
-#fi
+#add_user  "hadoop0" "ips"
 
 #Used to set the hostname of a host preparing for hadoop cluster;
 #first select the host type local host -> 0 while remote host -> 1;
@@ -119,14 +105,9 @@ function set_hostname {
 #will be hadoop-slaveX; X ranges from 1 to n-1;
 #then update all the hostnames accordingly;
 function edit_hosts {
-    if [ $(id -u) -gt 0 ]
-    then
-        echo "Permission denied, try to use su or sudo to gain privileged."
-        return 1
-    fi
     echo "It's time to edit hosts for all the hosts in the hadoop cluster."
     count=0
-    rm -rf hosts
+    rm -rf hosts $2>/dev/null
     touch hosts
     for ip in $(cat $1)
     do
@@ -159,34 +140,34 @@ function edit_hosts {
 #the first parameter is the name of the user;
 #the function is used to read all IPs in a file and enable login one another without password;
 function enable_ssh_without_pwd {
-    if [ $1 != `echo "$USER"` ] || [ `id -u` -eq 0 ] #ensure the current user is the user specified by parameter echo $USER is not enough we need id -u to filter further;
+    user_name=$1
+    if [ $user_name != `echo "$USER"` ] || [ `id -u` -eq 0 ] #ensure the current user is the user specified by parameter echo $USER is not enough we need id -u to filter further;
     then 
         echo "The current user should be the working user."
         echo -n "You can use"
         tput setaf 4 
-        echo -n " su $1 "
+        echo -n " su $user_name "
         tput sgr0
         echo "to achieve this and then re-try."
         return 1
     fi
-    #read -p "Input the file containing all the IPs in the cluster: " dir
-    dir=$2
-    for localhost in $(cat $dir) #traverse each line of the file - dir
+    ip_dir=$2
+    for localhost in $(cat $ip_dir) #traverse each line of the file - dir
     do
         ip_checker $localhost
         if [ $? -gt 0 ]
         then
-            echo "Wrong IP, check the IPs in $dir";
+            echo "Wrong IP, check the IPs in $ip_dir";
             return 1
         fi
         tput setaf 6
         echo "Generating rsa keys for $localhost"
         tput sgr0
-        ssh -t $localhost "rm -rf ~/.ssh && ssh-keygen -t rsa && touch /home/$1/.ssh/authorized_keys && sudo chmod 600 /home/$1/.ssh/authorized_keys" #-t is to force sudo command;
+        ssh -t $localhost "rm -rf ~/.ssh && ssh-keygen -t rsa && touch /home/$user_name/.ssh/authorized_keys && sudo chmod 600 /home/$user_name/.ssh/authorized_keys" #-t is to force sudo command;
     done
-    for localhost in $(cat $dir)
+    for localhost in $(cat $ip_dir)
     do
-        for ip in $(cat $dir)
+        for ip in $(cat $ip_dir)
         do
             tput setaf 6
             echo "Copy rsa public key from $localhost to $ip"
@@ -202,7 +183,7 @@ function enable_ssh_without_pwd {
     done
     return 0
 }
-#enable_ssh_without_pwd "hadoop" "ips"
+enable_ssh_without_pwd "hadoop" "ips"
 
 
 #root privilege required
@@ -224,7 +205,7 @@ function install_jdk_local {
     echo "Now, you may check java by java -version"
 }
 
-install_jdk_local
+#install_jdk_local
 
 #root privilege required
 #install hadoop via root privilege
@@ -235,9 +216,20 @@ function install_hadoop {
     tar xzf hadoop-2.7.1.tar.gz
     mv hadoop-2.7.1 hadoop
     chown -R $user_name:$user_name hadoop
+    echo "You must have configured the *xml files properly according to the cluster."
+    read -n1 -p "If not, you need to configure it now, input 1 to quit: " flag
+    if [ $flag -eq 0 ]
+    then
+        return 1
+    fi
+    for ip in $(cat $ip_dir)
+    do
+        scp *.xml $user_name@$ip:/home/$user_name/hadoop/etc/hadoop/
+    done
+    return 0
 }
 
-install_hadoop 
+install_hadoop "ips"
 
 #root privilege required
 #copy all the essential jdk and hadoop files to 
@@ -245,6 +237,7 @@ install_hadoop
 function configure_environment_variables {
     conf_dir=$1
     ip_dir=$2
+    user_name=$3
     for ip in $(cat $ip_dir)
     do
         echo "Copy all the essential jdk files to $ip..."
@@ -256,4 +249,4 @@ function configure_environment_variables {
     done
 }
 
-configure_environment_variables "conf" "ips"
+#configure_environment_variables "conf" "ips" $user_name
