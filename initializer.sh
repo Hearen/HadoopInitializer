@@ -4,13 +4,17 @@
 #Author      : LHearen
 #E-mail      : LHearen@gmail.com
 #Time        : Thu, 2016-05-05 11:14
-#Description : Used to add user and group;
+#Description : user_name is hard-coded to "hadoop"
+#           used to add user and group;
+#           enabling ssh login without password among hosts;
+#           updating hostnames of hosts in the cluster;
 #           downloading jdk and configure it;
 #           downloading hadoop and configure it;
-#           enabling ssh login without password;
 #####################################################################################
 
 . ./checker.sh
+
+user_name="hadoop"
 
 #Ensure the role is root to execute some privileged commands;
 #check_permission 
@@ -24,9 +28,9 @@
     #exit 1
 #fi
 
-#This function has to be run in root;
+#Root privilege required
 function add_user {
-    HADOOP_USER="hadoop0"
+    HADOOP_USER=$1
     echo "Adding a user for later use: "
     useradd $HADOOP_USER
     passwd $HADOOP_USER
@@ -34,6 +38,8 @@ function add_user {
     echo "User $HADOOP_USER added to group wheel successfully!"
     echo "Now you can use sudo to run privileged commands."
 }
+
+add_user $user_name
 
 
 
@@ -45,18 +51,6 @@ function add_user {
 #then
     #echo "Connection Okay!"
 #fi
-
-#Check whether the current hostname $1 is equal to the newly set hostname $2
-function check_hostname {
-    if [ "$1" == "$2" ]
-    then
-        echo "New hostname set successfully!"
-        
-    else
-        echo "Failed to set the new hostname, please check its format and retry later."
-        echo "The hostname is [$2] while the hostname you set is [$1]."
-    fi
-}
 
 #Used to set the hostname of a host preparing for hadoop cluster;
 #first select the host type local host -> 0 while remote host -> 1;
@@ -119,19 +113,48 @@ function set_hostname {
 
 #set_hostname
 
+#Root privilege required
+#converting all the ips in the file to hostnames
+#the first will be hadoop-master while all the rest
+#will be hadoop-slaveX; X ranges from 1 to n-1;
+#then update all the hostnames accordingly;
 function edit_hosts {
-    echo "It's time to edit hosts for all the hosts in the hadoop cluster."
-    echo "Using vim to insert the ip and hostname pairs in the /etc/hosts, save it and quit."
-    vim /etc/hosts
-    if [ $? -eq 0 ]
-    then 
-        echo "Done!"
-    else
-        echo "Failed!"
+    if [ $(id -u) -gt 0 ]
+    then
+        echo "Permission denied, try to use su or sudo to gain privileged."
+        return 1
     fi
+    echo "It's time to edit hosts for all the hosts in the hadoop cluster."
+    count=0
+    rm -rf hosts
+    touch hosts
+    for ip in $(cat $1)
+    do
+        ip_checker $ip
+        if [ $? -gt 0 ]
+        then
+            echo "Wrong IP, check the IPs in $dir";
+            return 1
+        fi
+        if [ $count -eq 0 ]
+        then
+            hostname="hadoop-master"
+        else
+            hostname="hadoop-slave$count"
+        fi
+        count=$[count+1]
+        echo "$ip $hostname" >> hosts
+        echo "update the hostname of $ip to $hostname"
+        ssh $ip hostnamectl set-hostname $hostname --static
+    done
+    for ip in $(cat $1)
+    do 
+        echo "updating the /etc/hosts of $ip"
+        cat hosts | ssh $ip "cat > /etc/hosts"
+    done
 }
 
-#edit_hosts
+#edit_hosts "ips"
 
 #the first parameter is the name of the user;
 #the function is used to read all IPs in a file and enable login one another without password;
@@ -146,7 +169,8 @@ function enable_ssh_without_pwd {
         echo "to achieve this and then re-try."
         return 1
     fi
-    read -p "Input the file containing all the IPs in the cluster: " dir
+    #read -p "Input the file containing all the IPs in the cluster: " dir
+    dir=$2
     for localhost in $(cat $dir) #traverse each line of the file - dir
     do
         ip_checker $localhost
@@ -178,4 +202,58 @@ function enable_ssh_without_pwd {
     done
     return 0
 }
-enable_ssh_without_pwd "hadoop"
+#enable_ssh_without_pwd "hadoop" "ips"
+
+
+#root privilege required
+#download jdk1.8 and configure java, javac and jre;
+function install_jdk_local {
+    cd /opt
+    echo "Start to download jdk 1.8 for 64-bit machine..."
+    wget --no-cookies --no-check-certificate --header "Cookie: gpw_e24=http%3A%2F%2Fwww.oracle.com%2F; oraclelicense=accept-securebackup-cookie" "http://download.oracle.com/otn-pub/java/jdk/8u77-b03/jdk-8u77-linux-x64.tar.gz"
+    tar xzf jdk-8u77-linux-x64.tar.gz
+    cd /opt/jdk1.8.0_77/
+    echo "Configuring jdk now..."
+    alternatives --install /usr/bin/java java /opt/jdk1.8.0_77/bin/java 2
+    alternatives --config java
+    echo "Configuring jar and javac now..."
+    alternatives --install /usr/bin/jar jar /opt/jdk1.8.0_77/bin/jar 2
+    alternatives --install /usr/bin/javac javac /opt/jdk1.8.0_77/bin/javac 2
+    alternatives --set jar /opt/jdk1.8.0_77/bin/jar
+    alternatives --set javac /opt/jdk1.8.0_77/bin/javac
+    echo "Now, you may check java by java -version"
+}
+
+install_jdk_local
+
+#root privilege required
+#install hadoop via root privilege
+#change the owner of the hadoop directory to user_name
+function install_hadoop {
+    cd /home/$user_name
+    wget http://apache.claz.org/hadoop/common/hadoop-2.7.1/hadoop-2.7.1.tar.gz
+    tar xzf hadoop-2.7.1.tar.gz
+    mv hadoop-2.7.1 hadoop
+    chown -R $user_name:$user_name hadoop
+}
+
+install_hadoop 
+
+#root privilege required
+#copy all the essential jdk and hadoop files to 
+#remotes and configure its environment variables;
+function configure_environment_variables {
+    conf_dir=$1
+    ip_dir=$2
+    for ip in $(cat $ip_dir)
+    do
+        echo "Copy all the essential jdk files to $ip..."
+        scp -r /opt/jdk1.8.0_77/ $ip:/opt/
+        echo "Copy all the essential hadoop files to $ip..."
+        scp -r /home/$user_name/hadoop $user_name@$ip:/home/$user_name/
+        echo "Trying to configure environment variables for $ip"
+        cat $conf_dir | ssh $ip "cat >> /etc/profile && source /etc/profile"
+    done
+}
+
+configure_environment_variables "conf" "ips"
