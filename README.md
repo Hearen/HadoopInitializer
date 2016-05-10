@@ -6,14 +6,14 @@ in a cluster composed of a certain amount of hosts connected to one another, by 
 Of course there are still many aspects that can be further optimized including the following parts: fault-tolerance, portability and maintainability; 
 - as for fault-tolerance, all the program does is to prompt the failure and essential debugging information if one stage failed but it cannot roll back to the previous stage; 
 - for portability, the operating system is fixed on the CentOS 7.1, after some checking some inconsistency among different systems in some operations are quite different so it's quite uneasy to make this program run in another system;  
-- when it comes to maintainability, the jdk 1.8 and hadoop 2.7 are both hard-coded which means when encountering different versions with different configuration process, the whole program can be invalid but of course still parts of the program can be used to assist and guide the user to complete the configuration.
+- when it comes to maintainability, the jdk 1.8 and hadoop 2.7 are both hard-coded which means when encountering different versions there will be different configuration processes, the whole program can be invalid but of course still parts of the program can be used to assist and guide the user to complete the configuration.
 
 Most of the operations the program does:
 
 - check the permission of the current role;
 - check the network and try to fix it if not available;
-- add working user, set its password and add it sudoers for later hadoop use;
-- according to a file containing all the ips of the hosts to change the hostnames and then add all the new hostnames in the hadoop cluster to /etc/hosts of all hosts;
+- add working user, set its password and add it to sudoers for later hadoop use;
+- according to a file containing all the ips of the hosts to change the hostnames and then add all the new hostnames in the hadoop cluster to /etc/hosts for all hosts;
 - according to a file containing all the ips of the hosts to enable login via ssh without password among hosts in the cluster;
 - download jdk 1.8 and configure java, javac and jre locally;
 - download hadoop 2.7 and install it locally;
