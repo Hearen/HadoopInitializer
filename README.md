@@ -22,8 +22,7 @@ Most of the operations the program does:
 - start hadoop in master node and check its status in each node in the cluster;
 
 ### Contact
-#####################################################################################
+
 - Author: LHearen
 - E-mail: LHearen@gmail.com   
 - Created: Fri, 2016-05-06 09:18
-#####################################################################################
