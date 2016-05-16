@@ -229,3 +229,10 @@ function java_checker {
         return 0
     fi
 }
+
+#Used to center the text in bash;
+function display_center {
+    COLUMNS=$( tput cols )
+    title=$1
+    printf "%*s\n" $(((${#title}+$COLUMNS)/2)) "$title"
+}

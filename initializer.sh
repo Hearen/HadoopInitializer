@@ -103,7 +103,8 @@ function set_hostname {
 #converting all the ips in the file to hostnames
 #the first will be hadoop-master while all the rest
 #will be hadoop-slaveX; X ranges from 1 to n-1;
-#then update all the hostnames accordingly;
+#then update all the hostnames accordingly 
+#which will overwrite the /etc/hosts file;
 function edit_hosts {
     echo "It's time to edit hosts for all the hosts in the hadoop cluster."
     count=0
@@ -229,7 +230,7 @@ function install_hadoop {
     return 0
 }
 
-install_hadoop "ips"
+#install_hadoop "ips"
 
 #root privilege required
 #copy all the essential jdk and hadoop files to 

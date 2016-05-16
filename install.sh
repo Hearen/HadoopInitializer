@@ -11,10 +11,10 @@
 . ./initializer.sh
 
 user_name="" #this name will be used to communicate among hosts in the cluster;
-ip_dir="" #this file contains all the ips in the cluster to automatic configuration;
+ip_dir="./etc/ip_addresses" #this file contains all the ips in the cluster to automatic configuration;
 
 clear
-echo "#####Welcome to Hearen's HadoopInitializer!#####"
+display_center "#####Welcome to Hearen's HadoopInitializer!#####"
 echo "First we need do some checking..."
 
 #Ensure root privilege;
@@ -28,7 +28,6 @@ else
     echo "Leaving the program..."
     return 1
 fi
-
 
 #Ensure the network connection is okay;
 check_fix_network
@@ -50,7 +49,6 @@ fi
 
 echo "Let's now add a user for each host in the cluster for later use."
 read -p "Input the user name: " user_name 
-read -p "Input the ip file: " ip_dir
 
 #Add the user for each host and meantime enable sudo command;
 add_user $user_name $ip_dir
@@ -63,6 +61,7 @@ fi
 
 #Update the hostnames and synchronize the /etc/hosts among hosts;
 echo "Let's now set the hostname for each host and synchronise the /etc/hosts file among them."
+
 edit_hosts $ip_dir
 if [ $? -gt 0 ]
 then 
