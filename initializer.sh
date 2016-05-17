@@ -4,12 +4,13 @@
 #Author      : LHearen
 #E-mail      : LHearen@gmail.com
 #Time        : Thu, 2016-05-05 11:14
-#Description : user_name is hard-coded to "hadoop"
-#           used to add user and group;
-#           enabling ssh login without password among hosts;
-#           updating hostnames of hosts in the cluster;
-#           downloading jdk and configure it;
-#           downloading hadoop and configure it;
+#Description : USER_NAME is defaulted to "hadoop"
+#           add user and enable sudo command;
+#           enable ssh login without password among hosts;
+#           update hostname and reset /etc/hosts for each host in the cluster;
+#           download and configure java locally;
+#           download and configure hadoop locally;
+#           install and configure java and hadoop for all the hosts in the cluster;
 #####################################################################################
 
 . ./checker.sh
@@ -88,7 +89,7 @@ function edit_hosts {
     for ip in $(cat $ips_file)
     do 
         echo "Updating the /etc/hosts for $ip"
-        cat hosts | ssh $ip "cat > /etc/hosts"
+        cat $hosts_file | ssh $ip "cat > /etc/hosts"
     done
 }
 
@@ -102,7 +103,7 @@ function enable_ssh_without_pwd {
     ips_file=$2
     if [ $user_name != `echo "$USER"` ] || [ `id -u` -eq 0 ] #ensure the current user is the user specified by parameter echo $USER is not enough we need id -u to filter further;
     then 
-        echo "The current user should be the working user."
+        echo "The current user should be the working user '$USER_NAME'."
         echo -n "You can use"
         tput setaf 4 
         echo -n " su $USER_NAME "
@@ -141,11 +142,12 @@ function enable_ssh_without_pwd {
     done
     return 0
 }
+
 #enable_ssh_without_pwd $USER_NAME $IPS_FILE
 
 
-#root privilege required - stay in the working directory;
-#download jdk1.8 and configure java, javac and jre;
+#Root privilege required - stay in the working directory;
+#Download jdk1.8 and configure java, javac and jre;
 function install_jdk_local {
     java_checker
     if [ $? -gt 0 ]
@@ -173,8 +175,8 @@ function install_jdk_local {
 
 #install_jdk_local
 
-#root privilege required - stay in the working directory;
-#install hadoop by unzipping the compressed file and rename the folder;
+#Root privilege required - stay in the working directory;
+#Install hadoop by unzipping the compressed file and rename the folder;
 function install_hadoop_local {
     if [ -f $HADOOP_ORIGINAL_FILE ] #check whether hadoop-2.7.1.tar.gz exists or not;
     then 
@@ -193,15 +195,22 @@ function install_hadoop_local {
     fi
 }
 
-install_hadoop 
+#install_hadoop 
 
-#root privilege required
-#copy all the essential jdk and hadoop files to 
-#remotes and configure its environment variables;
+#Root privilege required
+#Copy all the essential jdk and hadoop files to remotes and configure its environment variables;
 function install_and_configure_for_all_hosts {
     env_conf_dir=$1
     ips_file=$2
     user_name=$3
+    java_checker
+    if [ $? -gt 0 ] || [ ! -f HADOOP_FILE ]
+    then
+        echo "Java or hadoop installed or configured abnormally!"
+        echo "Please re-check their installation and re-try."
+        return 1
+    fi
+    if [ -f $JDK_ORIGINAL_FILE ]
     for ip in $(cat $ips_file)
     do
         echo "Copy all the essential jdk files to $ip..."
@@ -218,7 +227,6 @@ function install_and_configure_for_all_hosts {
     then
         return 1
     fi
-    return 0
     tput setaf 6
     echo "Start to copy hadoop configuration files to all hosts."
     tput sgr0
@@ -227,6 +235,7 @@ function install_and_configure_for_all_hosts {
         scp hadoop/* $USER_NAME@$ip:/home/$USER_NAME/hadoop/etc/hadoop/ #copy the hadoop configuration files to all the hosts in the cluster;
         ssh $ip "chmod -R $USER_NAME:$USER_NAME /home/$USER_NAME/hadoop" #change the owner and group of the hadoop directory;
     done
+    return 0
 }
 
-#configure_environment_variables "etc/env.conf" "etc/ip_addresses" "hadoop0"
+#configure_environment_variables $USER_NAME $ENV_CONF_FILE $IPS_FILE 
