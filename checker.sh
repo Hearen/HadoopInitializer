@@ -226,6 +226,7 @@ function java_checker {
         return 1
     else
         echo "java 1.8 already installed"
+        echo "You may check its version by 'java -version'"
         return 0
     fi
 }

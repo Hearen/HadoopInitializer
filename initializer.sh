@@ -14,108 +14,62 @@
 
 . ./checker.sh
 
-user_name="hadoop"
+#Default user name shared by the cluster;
+USER_NAME="hadoop"
+
+#Basic configuration file of the program;
+ENV_CONF_FILE="etc/env.conf"
+IPS_FILE="etc/ip_addresses"
+HOSTS_FILE="etc/hosts"
+
+#Default location where java installed;
+JDK_ORIGINAL_FILE="/opt/jdk-8u77-linux-x64.tar.gz"
+JDK_UNZIPPED_DIR="/opt"
+
+#Default location where hadoop installed;
+HADOOP_ORIGINAL_FILE="/home/$user_name/hadoop-2.7.1.tar.gz"
+HADOOP_UNZIPPED_FILE="/home/$user_name/hadoop-2.7.1"
+HADOOP_UNZIPPED_DIR="/home/$user_name/"
+HADOOP_FILE="/home/$user_name/hadoop"
 
 #Root privilege required
-#add a new user for each host in the ips file and enable sudo command;
+#Add a new user and enable sudo command for each host in the cluster;
 function add_user {
-    HADOOP_USER=$1
-    ip_dir="$2"
-    for ip in $(cat $ip_dir)
+    user_name=$1
+    ips_file=$2
+    for ip in $(cat $ips_file)
     do
         ip_checker $ip
         if [ $? -gt 0 ]
         then
-            echo "Wrong IP, check the IPs in $dir";
+            echo "Wrong IP, check the $ip in $ips_file"
             return 1
         fi
-        echo "Adding a user for $ip"
-        ssh $ip "useradd $HADOOP_USER &&  passwd $HADOOP_USER && usermod -aG wheel $HADOOP_USER"
-        echo "User $HADOOP_USER added to $ip group wheel successfully!"
-        echo "Now you can use sudo to run privileged commands in $ip." #if till now the sudo command is not available, you might check /etc/sudoers and uncomment wheel group;
+        echo "Adding user $user_name for $ip"
+        ssh $ip "useradd $user_name &&  passwd $user_name && usermod -aG wheel $user_name"
+        echo "User $user_name added to $ip group wheel successfully!"
+        echo "Now you can use sudo to run root commands in $ip." #if till now the sudo command is not available, you might check /etc/sudoers and uncomment wheel group;
     done
 }
 
-#add_user  "hadoop0" "ips"
+#add_user $USER_NAME $IPS_FILE
 
-#Used to set the hostname of a host preparing for hadoop cluster;
-#first select the host type local host -> 0 while remote host -> 1;
-#if it's local type, the user will be prompted to input the new hostname directly;
-#but it it's remote type, the user input both the ip and the hostname;
-function set_hostname {
-    echo
-    tput setaf 1
-    echo "Set hostname for local or remote host." 
-    tput setaf 6
-    while [ 1 ]
-    do
-        read -n1 -p "Input 0 [local] or 1 [remote]: " type
-        case $type in 
-            0) 
-                echo
-                echo "Set hostname for local host."
-                tput sgr0
-                read -p "New hostname: " hostname
-                hostnamectl set-hostname $hostname --static
-                echo "Checking the result..."
-                t=$(hostname)
-                check_hostname $t $hostname
-                #if [ "$t" == $hostname ]
-                #then
-                    #echo "New hostname set successfully!"
-                #else
-                    #echo "Failed to set the new hostname, please check its format and retry later."
-                #fi
-                return 0
-                ;;
-            1)
-                echo
-                echo "Set hostname for remote host."
-                tput sgr0
-                read -p "IP of the remote host: " ip
-                read -p "New hostname: " hostname
-                ssh root@$ip hostnamectl set-hostname $hostname --static
-                echo "To verify the remote hostname, you need to re-input the password."
-                t=$(ssh root@$ip hostname)
-                check_hostname $t $hostname
-                #if [ "$t" == $hostname ]
-                #then
-                    #echo "New hostname set successfully!"
-                #else
-                    #echo "Failed to set the new hostname, please check its format and retry later."
-                #fi
-                return 0
-                ;;
-            *)
-                echo 
-                tput setaf 1
-                echo "Input Error. Please input 0 [local] or 1 [remote]!"
-                echo
-                ;;
-        esac
-    done
-}
-
-
-#set_hostname
 
 #Root privilege required
-#converting all the ips in the file to hostnames
-#the first will be hadoop-master while all the rest
-#will be hadoop-slaveX; X ranges from 1 to n-1;
-#then update all the hostnames accordingly 
-#which will overwrite the /etc/hosts file;
+#Converting all the ips in the etc/ip_addresses file to hostnames
+#The first will be hadoop-master while all the rest will be hadoop-slavex; x ranges from 1 to n-1
+#Then update all the hosts accordingly overwriting the /etc/hosts file
 function edit_hosts {
-    echo "It's time to edit hosts for all the hosts in the hadoop cluster."
+    ips_file=$1
+    hosts_file=$2
     count=0
-    rm -rf hosts $2>/dev/null
-    touch hosts
-    for ip in $(cat $1)
+    rm -rf $hosts_file 
+    for ip in $(cat $ips_file)
     do
         ip_checker $ip
         if [ $? -gt 0 ]
         then
-            echo "Wrong IP, check the IPs in $dir";
+            echo "wrong ip, check the $ip in $ips_file";
             return 1
         fi
         if [ $count -eq 0 ]
@@ -125,40 +79,43 @@ function edit_hosts {
             hostname="hadoop-slave$count"
         fi
         count=$[count+1]
-        echo "$ip $hostname" >> hosts
-        echo "update the hostname of $ip to $hostname"
+        echo "$ip $hostname" >> $hosts_file
+        echo "Update the hostname of $ip to $hostname"
         ssh $ip hostnamectl set-hostname $hostname --static
     done
-    for ip in $(cat $1)
+    echo
+    echo "Start to replace /etc/hosts for each host in the cluster..."
+    for ip in $(cat $ips_file)
     do 
-        echo "updating the /etc/hosts of $ip"
+        echo "Updating the /etc/hosts for $ip"
         cat hosts | ssh $ip "cat > /etc/hosts"
     done
 }
 
-#edit_hosts "ips"
+#edit_hosts $IPS_FILE $HOSTS_FILE
 
-#the first parameter is the name of the user;
-#the function is used to read all IPs in a file and enable login one another without password;
+#Hadoop user required;
+#Used to enable ssh-login to one another among hosts without password
+#IP addresses are provided in a file
 function enable_ssh_without_pwd {
     user_name=$1
+    ips_file=$2
     if [ $user_name != `echo "$USER"` ] || [ `id -u` -eq 0 ] #ensure the current user is the user specified by parameter echo $USER is not enough we need id -u to filter further;
     then 
         echo "The current user should be the working user."
         echo -n "You can use"
         tput setaf 4 
-        echo -n " su $user_name "
+        echo -n " su $USER_NAME "
         tput sgr0
         echo "to achieve this and then re-try."
         return 1
     fi
-    ip_dir=$2
-    for localhost in $(cat $ip_dir) #traverse each line of the file - dir
+    for localhost in $(cat $ips_file) #traverse each line of the file - each IP address;
     do
         ip_checker $localhost
         if [ $? -gt 0 ]
         then
-            echo "Wrong IP, check the IPs in $ip_dir";
+            echo "Wrong IP, check the $localhost in $ips_file";
             return 1
         fi
         tput setaf 6
@@ -166,9 +123,9 @@ function enable_ssh_without_pwd {
         tput sgr0
         ssh -t $localhost "rm -rf ~/.ssh && ssh-keygen -t rsa && touch /home/$user_name/.ssh/authorized_keys && sudo chmod 600 /home/$user_name/.ssh/authorized_keys" #-t is to force sudo command;
     done
-    for localhost in $(cat $ip_dir)
+    for localhost in $(cat $ips_file)
     do
-        for ip in $(cat $ip_dir)
+        for ip in $(cat $ips_file)
         do
             tput setaf 6
             echo "Copy rsa public key from $localhost to $ip"
@@ -184,70 +141,92 @@ function enable_ssh_without_pwd {
     done
     return 0
 }
-enable_ssh_without_pwd "hadoop" "ips"
+#enable_ssh_without_pwd $USER_NAME $IPS_FILE
 
 
-#root privilege required
+#root privilege required - stay in the working directory;
 #download jdk1.8 and configure java, javac and jre;
 function install_jdk_local {
-    cd /opt
-    echo "Start to download jdk 1.8 for 64-bit machine..."
-    wget --no-cookies --no-check-certificate --header "Cookie: gpw_e24=http%3A%2F%2Fwww.oracle.com%2F; oraclelicense=accept-securebackup-cookie" "http://download.oracle.com/otn-pub/java/jdk/8u77-b03/jdk-8u77-linux-x64.tar.gz"
-    tar xzf jdk-8u77-linux-x64.tar.gz
-    cd /opt/jdk1.8.0_77/
-    echo "Configuring jdk now..."
-    alternatives --install /usr/bin/java java /opt/jdk1.8.0_77/bin/java 2
-    alternatives --config java
-    echo "Configuring jar and javac now..."
-    alternatives --install /usr/bin/jar jar /opt/jdk1.8.0_77/bin/jar 2
-    alternatives --install /usr/bin/javac javac /opt/jdk1.8.0_77/bin/javac 2
-    alternatives --set jar /opt/jdk1.8.0_77/bin/jar
-    alternatives --set javac /opt/jdk1.8.0_77/bin/javac
-    echo "Now, you may check java by java -version"
+    java_checker
+    if [ $? -gt 0 ]
+    then
+        if [ -f $JDK_ORIGINAL_FILE ]
+        then
+            echo "$JDK_ORIGINAL_FILE already exists, needless to download."
+        else
+            echo "Start to download jdk 1.8 for 64-bit machine..."
+            wget -O $JDK_ORIGINAL_FILE --no-cookies --no-check-certificate --header "Cookie: gpw_e24=http%3A%2F%2Fwww.oracle.com%2F; oraclelicense=accept-securebackup-cookie" "http://download.oracle.com/otn-pub/java/jdk/8u77-b03/jdk-8u77-linux-x64.tar.gz"
+        fi
+        tar xzf $JDK_ORIGINAL_FILE -C $JDK_UNZIPPED_DIR
+        echo "Configuring jdk now..."
+        alternatives --install /usr/bin/java java /opt/jdk1.8.0_77/bin/java 2
+        alternatives --config java
+        echo "Configuring jar and javac now..."
+        alternatives --install /usr/bin/jar jar /opt/jdk1.8.0_77/bin/jar 2
+        alternatives --install /usr/bin/javac javac /opt/jdk1.8.0_77/bin/javac 2
+        alternatives --set jar /opt/jdk1.8.0_77/bin/jar
+        alternatives --set javac /opt/jdk1.8.0_77/bin/javac
+        echo "Now, you may check java by java -version"
+        return 0
+    fi
 }
 
 #install_jdk_local
 
-#root privilege required
-#install hadoop via root privilege
-#change the owner of the hadoop directory to user_name
-function install_hadoop {
-    cd /home/$user_name
-    wget http://apache.claz.org/hadoop/common/hadoop-2.7.1/hadoop-2.7.1.tar.gz
-    tar xzf hadoop-2.7.1.tar.gz
-    mv hadoop-2.7.1 hadoop
-    chown -R $user_name:$user_name hadoop
-    echo "You must have configured the *xml files properly according to the cluster."
-    read -n1 -p "If not, you need to configure it now, input 1 to quit: " flag
-    if [ $flag -eq 0 ]
-    then
-        return 1
+#root privilege required - stay in the working directory;
+#install hadoop by unzipping the compressed file and rename the folder;
+function install_hadoop_local {
+    if [ -f $HADOOP_ORIGINAL_FILE ] #check whether hadoop-2.7.1.tar.gz exists or not;
+    then 
+        echo "$HADOOP_ORIGINAL_FILE already exists, needless to download."
+    else
+        echo "Start to download $HADOOP_ORIGINAL_FILE ..."
+        wget -O $HADOOP_ORIGINAL_FILE http://apache.claz.org/hadoop/common/hadoop-2.7.1/hadoop-2.7.1.tar.gz
     fi
-    for ip in $(cat $ip_dir)
-    do
-        scp *.xml $user_name@$ip:/home/$user_name/hadoop/etc/hadoop/
-    done
-    return 0
+    if [ -f $HADOOP_FILE ] #check whether hadoop-2.7.1.tar.gz unzipped or not;
+    then
+        echo "directory $HADOOP_FILE already exists, needless to install."
+    else
+        rm -rf $HADOOP_UNZIPPED_FILE
+        tar xzf $HADOOP_ORIGINAL_FILE -C $HADOOP_UNZIPPED_DIR 
+        mv -f $HADOOP_UNZIPPED_FILE $HADOOP_FILE
+    fi
 }
 
-#install_hadoop "ips"
+install_hadoop 
 
 #root privilege required
 #copy all the essential jdk and hadoop files to 
 #remotes and configure its environment variables;
-function configure_environment_variables {
-    conf_dir=$1
-    ip_dir=$2
+function install_and_configure_for_all_hosts {
+    env_conf_dir=$1
+    ips_file=$2
     user_name=$3
-    for ip in $(cat $ip_dir)
+    for ip in $(cat $ips_file)
     do
         echo "Copy all the essential jdk files to $ip..."
-        scp -r /opt/jdk1.8.0_77/ $ip:/opt/
+        scp -r /opt/jdk1.8.0_77 $ip:/opt/
         echo "Copy all the essential hadoop files to $ip..."
-        scp -r /home/$user_name/hadoop $user_name@$ip:/home/$user_name/
+        scp -r /home/$USER_NAME/hadoop $USER_NAME@$ip:/home/$USER_NAME/
         echo "Trying to configure environment variables for $ip"
-        cat $conf_dir | ssh $ip "cat >> /etc/profile && source /etc/profile"
+        cat $ENV_CONF_DIR | ssh $ip "cat >> /etc/profile && source /etc/profile"
+    done
+    echo "You must have configured the *xml files properly according to the cluster."
+    read -p "If not, you need to configure it now, input [ 1|y|Y ] to quit to configure it right now: " flag
+    echo
+    if [ "$flag" == "1" ] || [ "$flag" == "y" ] || [ "$flag" == "Y" ]
+    then
+        return 1
+    fi
+    return 0
+    tput setaf 6
+    echo "Start to copy hadoop configuration files to all hosts."
+    tput sgr0
+    for ip in $(cat $ips_file)
+    do
+        scp hadoop/* $USER_NAME@$ip:/home/$USER_NAME/hadoop/etc/hadoop/ #copy the hadoop configuration files to all the hosts in the cluster;
+        ssh $ip "chmod -R $USER_NAME:$USER_NAME /home/$USER_NAME/hadoop" #change the owner and group of the hadoop directory;
     done
 }
 
-#configure_environment_variables "conf" "ips" $user_name
+#configure_environment_variables "etc/env.conf" "etc/ip_addresses" "hadoop0"
