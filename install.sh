@@ -49,12 +49,10 @@ do
         check_permission 
         if [ $? -eq 0  ] 
         then 
-            echo "Root Permission Granted." 
+            echo "Permission Granted." 
         else 
-            echo "Permission denied!" 
-            echo "Make sure you are running this program in root or sudo command." 
-            echo "Leaving the program..."
-            return 1
+            echo "Permission Denied!" 
+            exit 1
         fi
 
         #Ensure the network connection is okay;
@@ -66,7 +64,7 @@ do
         else
             echo "Failed to fix the connection."
             echo "Leaving the program..."
-            return 1
+            exit 1
         fi
 
         #Ensure essential packages are installed - ssh and scp
@@ -87,43 +85,53 @@ do
         then 
             echo "Failed to add user!"
             echo "Leaving the program..."
-            return 1
+            exit 1
         fi
 
         #Update the hostnames and synchronize the /etc/hosts among hosts;
         tput setaf 6
         echo
         echo "Let's now set the hostname for each host and synchronise the /etc/hosts file among them."
-        echo "It's time to edit hosts for all the hosts in the hadoop cluster."
+        echo "It's time to edit hostnames for all the hosts in the hadoop cluster."
         tput sgr0
         edit_hosts $IPS_FILE $HOSTS_FILE
         if [ $? -gt 0 ]
         then 
             echo "Failed to edit hostnames!"
             echo "Leaving the program..."
-            return 1
+            exit 1
         fi
 
        #Download jdk1.8 and configure it locally;
         tput setaf 6
         echo "Let's start to download and install jdk1.8 locally..."
         tput sgr0
-        install_jdk_local #even this failed, it's okay to move on;
+        install_jdk_local 
+        if [ $? -gt 0 ]
+        then
+            echo "Failed to install java, please re-try later."
+            exit 1
+        fi
 
         #Download hadoop2.7 and configure it locally;
         tput setaf 6
         echo "Let's just download and install hadloop locally..."
         tput sgr0
-        install_hadoop #even this failed, it's okay to move on;
-
+        install_hadoop_local 
+        if [ $? -gt 0 ]
+        then
+            echo "Failed to install hadoop, please re-try later."
+            exit 1
+        fi
 
         #After local installation and configuration
         #Install and configure java and hadoop globally in the cluster;
         tput setaf 6
         echo "It's time to install and configure jdk1.8 and hadoop2.7 for all hosts in the cluster..."
         tput sgr0
-        configure_environment_variables $USER_NAME $ENV_CONF_FILE $IPS_FILE 
-        break
+        echo $USER_NAME $ENV_CONF_FILE $IPS_FILE 
+        install_for_all_hosts $USER_NAME $ENV_CONF_FILE $IPS_FILE 
+        exit 0
         ;;
 
     1)
@@ -133,13 +141,13 @@ do
         echo "Let's enable ssh-login without password among hosts."
         tput sgr0
         enable_ssh_without_pwd $USER_NAME $IPS_FILE
-        break
+        exit 0
         ;;
     *)
         echo
         echo "Input error!"
         echo "0 for the first time"
-        echo "1 for the user '$USER_NAME'"
+        echo "1 after suing to user [$USER_NAME]"
         ;;
     esac
 done
