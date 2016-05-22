@@ -125,7 +125,7 @@ function enable_ssh_without_pwd {
         tput setaf 6
         echo "Generating rsa keys for [$localhost"]
         tput sgr0
-        ssh -t $localhost "rm -rf ~/.ssh && ssh-keygen -t rsa && touch /home/$user_name/.ssh/authorized_keys && sudo chmod 600 /home/$user_name/.ssh/authorized_keys" #-t is to force sudo command;
+        ssh -t $localhost "rm -rf ~/.ssh && ssh-keygen -t rsa && touch /home/$user_name/.ssh/authorized_keys && chmod 600 /home/$user_name/.ssh/authorized_keys" #-t is to force sudo command;
     done
     for localhost in $(cat $ips_file)
     do
@@ -242,14 +242,14 @@ function install_for_all_hosts {
             tput setaf 6
             echo "Copy all the essential hadoop files to $ip ..."
             tput sgr0
-            scp -r $HADOOP_FILE $USER_NAME@$ip:/home/$USER_NAME/
+            scp -r $HADOOP_FILE $user_name@$ip:/home/$user_name/
         fi
         tput setaf 6
-        echo "Trying to append environment variables to /etc/profile for $ip"
+        echo "Trying to append environment variables to /home/$user_name/.bashrc for $ip"
         tput sgr0
-        cat $env_conf_dir | ssh $ip "cat >> /etc/profile" #" && source /etc/profile"
-        echo "Updating the environment variable PATH..."
-        ssh $USER_NAME@$ip "source /etc/profile"
+        cat $env_conf_dir | ssh $ip "cat >> /home/$user_name/.bashrc" 
+        #echo "Updating the environment variable PATH..."
+        #ssh $user_name@$ip "source /home/$user_name/.bashrc"
     done
     echo "You must have configured the *xml files properly according to the cluster."
     while [ 1 ]
@@ -279,4 +279,4 @@ function install_for_all_hosts {
     return 0
 }
 
-#install_for_all_hosts $USER_NAME $ENV_CONF_FILE $IPS_FILE 
+install_for_all_hosts $USER_NAME $ENV_CONF_FILE $IPS_FILE 
