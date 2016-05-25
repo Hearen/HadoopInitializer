@@ -34,7 +34,10 @@ echo
 tput sgr0
 
 echo "First time to run this program press [0]"
-echo "After suing to 'USER_NAME' press [1]"
+echo "Start copy configuration files for hadoop cluster press [1]"
+echo "After suing to '$USER_NAME' press [2]"
+echo "Run a simple test in working user '$USER_NAME' press [3]"
+echo "Press [q] to exit."
 
 while [ 1 ]
 do
@@ -54,6 +57,9 @@ do
             echo "Permission Denied!" 
             exit 1
         fi
+
+        #Update env.conf
+        update_env
 
         #Ensure the network connection is okay;
         echo
@@ -135,19 +141,57 @@ do
         ;;
 
     1)
+        echo
+        #Ensure root privilege;
+        echo
+        check_permission 
+        if [ $? -eq 0  ] 
+        then 
+            echo "Permission Granted." 
+        else 
+            echo "Permission Denied!" 
+            exit 1
+        fi
+
+        copy_hadoop_configuration_files $IPS_FILE
+        tput setaf 1
+        echo "Done!"
+        tput sgr0
+        exit 0
+        ;;
+    2)
         #Ensure ssh-login without password among hosts in the cluster;
         tput setaf 6
         echo
         echo "Let's enable ssh-login without password among hosts."
         tput sgr0
         enable_ssh_without_pwd $USER_NAME $IPS_FILE
+        tput setaf 4
+        echo "Let's test the installation"
+        tput sgr0
+        test_hadoop $USER_NAME
+        exit 0
+        ;;
+    3) 
+        tput setaf 4
+        echo
+        echo "Let's test the installation"
+        tput sgr0
+        test_hadoop $USER_NAME
+        exit 0
+        ;;
+    q)
+        echo "Leaving the program.."
         exit 0
         ;;
     *)
         echo
         echo "Input error!"
-        echo "0 for the first time"
-        echo "1 after suing to user [$USER_NAME]"
+        echo "First time to run this program press [0]"
+        echo "Start copy configuration files for hadoop cluster press [1]"
+        echo "After suing to '$USER_NAME' press [2]"
+        echo "Run a simple test in working user '$USER_NAME' press [3]"
+        echo "Press [q] to exit."
         ;;
     esac
 done

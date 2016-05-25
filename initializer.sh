@@ -16,7 +16,7 @@
 . ./checker.sh
 
 #Default user name shared by the cluster;
-USER_NAME="hadoop"
+USER_NAME="luo"
 
 LOCAL_IP_ADDRESS=$(hostname --ip-address) #get the ip address of the current machine;
 
@@ -35,6 +35,22 @@ HADOOP_ORIGINAL_FILE="/home/$USER_NAME/hadoop-2.7.1.tar.gz"
 HADOOP_UNZIPPED_FILE="/home/$USER_NAME/hadoop-2.7.1"
 HADOOP_UNZIPPED_DIR="/home/$USER_NAME/"
 HADOOP_FILE="/home/$USER_NAME/hadoop"
+
+
+#Used to update the env.conf of the program according to the user
+function update_env {
+    echo "#configure jdk environment" > $ENV_CONF_FILE
+    echo "export JAVA_HOME=/opt/jdk1.8.0_77" >> $ENV_CONF_FILE
+    echo "export JRE_HOME=/opt/jdk1.8.0_77/jre" >> $ENV_CONF_FILE
+    echo "export CLASSPATH=.:$CLASSPATH:$JAVA_HOME/lib:$JRE_HOME/lib" >> $ENV_CONF_FILE
+    echo "export PATH=$PATH:$JAVA_HOME/bin:$JRE_HOME/bin" >> $ENV_CONF_FILE
+
+    echo "#configure hadoop environment" >> $ENV_CONF_FILE
+    echo "export HADOOP_HOME=/home/$USER_NAME/hadoop" >> $ENV_CONF_FILE
+    echo "export PATH=$PATH:$HADOOP_HOME/bin:$HADOOP_HOME/sbin" >> $ENV_CONF_FILE
+    echo "export HADOOP_HOME_WARN_SUPPRESS=1" >> $ENV_CONF_FILE
+    echo "export CLASSPATH=$CLASSPATH:$HADOOP_HOME/share/hadoop/tools/lib/hadoop-core-1.2.1.jar" >> $ENV_CONF_FILE
+}
 
 #Root privilege required
 #Add a new user and enable sudo command for each host in the cluster;
@@ -88,7 +104,9 @@ function edit_hosts {
         ssh $ip hostnamectl set-hostname $hostname --static
     done
     echo
+    tput setaf 6
     echo "Start to replace /etc/hosts for each host in the cluster..."
+    tput sgr0
     for ip in $(cat $ips_file)
     do 
         echo "Updating the /etc/hosts for [$ip"]
@@ -238,18 +256,18 @@ function install_for_all_hosts {
             tput setaf 6
             echo "Copy all the essential jdk files to $ip  ..."
             tput sgr0
+            ssh $ip "rm -rf $JDK_FILE"
             scp -r $JDK_FILE $ip:/opt/
             tput setaf 6
             echo "Copy all the essential hadoop files to $ip ..."
             tput sgr0
+            ssh $ip "rm -rf $HADOOP_FILE"
             scp -r $HADOOP_FILE $user_name@$ip:/home/$user_name/
         fi
         tput setaf 6
         echo "Trying to append environment variables to /home/$user_name/.bashrc for $ip"
         tput sgr0
         cat $env_conf_dir | ssh $ip "cat >> /home/$user_name/.bashrc" 
-        #echo "Updating the environment variable PATH..."
-        #ssh $user_name@$ip "source /home/$user_name/.bashrc"
     done
     echo "You must have configured the *xml files properly according to the cluster."
     while [ 1 ]
@@ -260,23 +278,51 @@ function install_for_all_hosts {
         then
             return 1
         else
+            copy_hadoop_configuration_files $ips_file
             break
-        fi
-    done
-    tput setaf 6
-    echo "Start to copy hadoop configuration files to all hosts."
-    tput sgr0
-    for ip in $(cat $ips_file)
-    do
-        if [[ $ip != $LOCAL_IP_ADDRESS ]]
-        then
-            scp hadoop/* $USER_NAME@$ip:/home/$USER_NAME/hadoop/etc/hadoop/ #copy the hadoop configuration files to all the hosts in the cluster;
-            #Copy jdk and hadoop files, append environment variables for hosts;
-            echo "Updating the owner of $HOSTS_FILE to $USER_NAME:$USER_NAME ..."
-            ssh $ip "chown -R $USER_NAME:$USER_NAME /home/$USER_NAME/hadoop" #change the owner and group of the hadoop directory;
         fi
     done
     return 0
 }
 
-install_for_all_hosts $USER_NAME $ENV_CONF_FILE $IPS_FILE 
+#install_for_all_hosts $USER_NAME $ENV_CONF_FILE $IPS_FILE 
+
+#Used to configure the cluster via the hadoop xml configuration files
+function copy_hadoop_configuration_files {
+    ips_file=$1
+    tput setaf 6
+    echo "Start to copy hadoop configuration files to all hosts." 
+    tput sgr0 
+    for ip in $(cat $ips_file)
+    do
+        echo "Copy to [$ip]"
+        scp hadoop/* root@$ip:/home/$USER_NAME/hadoop/etc/hadoop/ #copy the hadoop configuration files to all the hosts in the cluster;
+        echo "Change the owner of the hadoop directory in [$ip]"
+        ssh $ip "chown -R $USER_NAME:$USER_NAME /home/$USER_NAME/hadoop" #change the owner and group of the hadoop directory;
+    done
+}
+ 
+#Last step testing the hadoop installation
+function test_hadoop {
+    user_name=$1
+    if [ $user_name != `echo "$USER"` ] || [ `id -u` -eq 0 ] #ensure the current user is the user specified by parameter echo $USER is not enough we need id -u to filter further;
+    then 
+        echo "The current user should be the working user [$USER_NAME]."
+        echo -n "You can use"
+        tput setaf 4 
+        echo -n " su $USER_NAME "
+        tput sgr0
+        echo "to achieve this and then re-try."
+        return 1
+    fi
+    tput setaf 6
+    echo "Trying to start the hadoop..."
+    tput sgr0
+    start-all.sh
+    tput setaf 6
+    echo "Checking the service..."
+    jps
+    tput sgr0
+}
+
+#test_hadoop $USER_NAME
