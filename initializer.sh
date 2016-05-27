@@ -39,7 +39,9 @@ HADOOP_FILE="/home/$USER_NAME/hadoop"
 
 #Used to update the env.conf of the program according to the user
 function update_env {
-    echo "#configure jdk environment" > $ENV_CONF_FILE
+    echo "Updating $ENV_CONF_FILE"
+    echo "#Created: $(date)" > $ENV_CONF_FILE
+    echo "#configure jdk environment" >> $ENV_CONF_FILE
     echo "export JAVA_HOME=/opt/jdk1.8.0_77" >> $ENV_CONF_FILE
     echo "export JRE_HOME=/opt/jdk1.8.0_77/jre" >> $ENV_CONF_FILE
     echo "export CLASSPATH=.:$CLASSPATH:$JAVA_HOME/lib:$JRE_HOME/lib" >> $ENV_CONF_FILE
@@ -51,6 +53,8 @@ function update_env {
     echo "export HADOOP_HOME_WARN_SUPPRESS=1" >> $ENV_CONF_FILE
     echo "export CLASSPATH=$CLASSPATH:$HADOOP_HOME/share/hadoop/tools/lib/hadoop-core-1.2.1.jar" >> $ENV_CONF_FILE
 }
+
+update_env
 
 #Root privilege required
 #Add a new user and enable sudo command for each host in the cluster;
