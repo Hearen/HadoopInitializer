@@ -16,7 +16,7 @@
 . ./checker.sh
 
 #Default user name shared by the cluster;
-USER_NAME="luo"
+USER_NAME="hadoop"
 
 LOCAL_IP_ADDRESS=$(hostname --ip-address) #get the ip address of the current machine;
 
@@ -54,7 +54,7 @@ function update_env {
     echo "export CLASSPATH=$CLASSPATH:$HADOOP_HOME/share/hadoop/tools/lib/hadoop-core-1.2.1.jar" >> $ENV_CONF_FILE
 }
 
-update_env
+#update_env
 
 #Root privilege required
 #Add a new user and enable sudo command for each host in the cluster;
@@ -269,9 +269,9 @@ function install_for_all_hosts {
             scp -r $HADOOP_FILE $user_name@$ip:/home/$user_name/
         fi
         tput setaf 6
-        echo "Trying to append environment variables to /home/$user_name/.bashrc for $ip"
+        echo "Trying to append environment variables to /etc/profile for $ip"
         tput sgr0
-        cat $env_conf_dir | ssh $ip "cat >> /home/$user_name/.bashrc" 
+        cat $env_conf_dir | ssh $ip "cat >> /etc/profile" 
     done
     echo "You must have configured the *xml files properly according to the cluster."
     while [ 1 ]
