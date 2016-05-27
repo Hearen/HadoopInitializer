@@ -44,17 +44,17 @@ function update_env {
     echo "#configure jdk environment" >> $ENV_CONF_FILE
     echo "export JAVA_HOME=/opt/jdk1.8.0_77" >> $ENV_CONF_FILE
     echo "export JRE_HOME=/opt/jdk1.8.0_77/jre" >> $ENV_CONF_FILE
-    echo "export CLASSPATH=.:$CLASSPATH:$JAVA_HOME/lib:$JRE_HOME/lib" >> $ENV_CONF_FILE
-    echo "export PATH=$PATH:$JAVA_HOME/bin:$JRE_HOME/bin" >> $ENV_CONF_FILE
+    echo "export CLASSPATH=.:\$CLASSPATH:\$JAVA_HOME/lib:\$JRE_HOME/lib" >> $ENV_CONF_FILE
+    echo "export PATH=\$PATH:\$JAVA_HOME/bin:\$JRE_HOME/bin" >> $ENV_CONF_FILE
 
     echo "#configure hadoop environment" >> $ENV_CONF_FILE
     echo "export HADOOP_HOME=/home/$USER_NAME/hadoop" >> $ENV_CONF_FILE
-    echo "export PATH=$PATH:$HADOOP_HOME/bin:$HADOOP_HOME/sbin" >> $ENV_CONF_FILE
+    echo "export PATH=\$PATH:\$HADOOP_HOME/bin:\$HADOOP_HOME/sbin" >> $ENV_CONF_FILE
     echo "export HADOOP_HOME_WARN_SUPPRESS=1" >> $ENV_CONF_FILE
-    echo "export CLASSPATH=$CLASSPATH:$HADOOP_HOME/share/hadoop/tools/lib/hadoop-core-1.2.1.jar" >> $ENV_CONF_FILE
+    echo "export CLASSPATH=\$CLASSPATH:\$HADOOP_HOME/share/hadoop/tools/lib/hadoop-core-1.2.1.jar" >> $ENV_CONF_FILE
 }
 
-#update_env
+update_env
 
 #Root privilege required
 #Add a new user and enable sudo command for each host in the cluster;
@@ -302,7 +302,7 @@ function install_for_all_hosts {
     return 0
 }
 
-install_for_all_hosts $USER_NAME $ENV_CONF_FILE $IPS_FILE 
+#install_for_all_hosts $USER_NAME $ENV_CONF_FILE $IPS_FILE 
 
 #Used to configure the cluster via the hadoop xml configuration files
 function copy_hadoop_configuration_files {
