@@ -235,6 +235,24 @@ function java_checker {
 
 #java_checker "133.133.135.37" "hadoop"
 
+#Used to check whether the directory exist in remote;
+function remote_directory_checker {
+    ip=$1
+    user_name=$2
+    remote_dir=$3
+    if (ssh $user_name@$ip "[ -d "$remote_dir"  ]")
+    then
+        #echo "exists!"
+        return 0
+    else 
+        #echo "does not exist!"
+        return 1
+    fi
+}
+
+#remote_directory_checker "133.133.135.8" "hadoop" "/home/hadoop/hadoop"
+#remote_directory_checker "133.133.135.8" "hadoop" "/home/hadoop/hadoop000"
+
 #Used to center the text in bash;
 function display_center {
     COLUMNS=$( tput cols )
