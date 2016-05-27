@@ -219,7 +219,9 @@ function ip_checker {
 #Check whether jdk 1.8 installed or not
 #return 1 if not installed otherwise return 0;
 function java_checker {
-    ret=$(java -version 2>&1 | sed -n "/1.8/p")
+    ip=$1
+    user_name=$2
+    ret=$(ssh $user_name@$ip "java -version" 2>&1 | sed -n "/1.8/p")
     if [ "$ret" == "" ]
     then
         echo "java 1.8 not installed"
@@ -230,6 +232,8 @@ function java_checker {
         return 0
     fi
 }
+
+#java_checker "133.133.135.37" "hadoop"
 
 #Used to center the text in bash;
 function display_center {
