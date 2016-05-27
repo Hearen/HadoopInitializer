@@ -239,7 +239,8 @@ function install_for_all_hosts {
     user_name=$1
     env_conf_dir=$2
     ips_file=$3
-    java_checker
+    echo "Checking java and hadoop installation in [$LOCAL_IP_ADDRESS]"
+    java_checker $LOCAL_IP_ADDRESS $USER_NAME
     if [ $? -gt 0 ] || ! [ -d "$HADOOP_FILE" ] || ! [ -d "$JDK_FILE" ]
     then
         echo "Java or hadoop installed or configured abnormally!"
@@ -250,7 +251,7 @@ function install_for_all_hosts {
     tput setaf 6
     echo
     echo
-    echo "Start to copy related files to other hosts..."
+    echo "Start to checking java and hadoop installation for other hosts..."
     tput sgr0
     for ip in $(cat $ips_file)
     do
@@ -258,18 +259,30 @@ function install_for_all_hosts {
         if [[ $ip != $LOCAL_IP_ADDRESS ]]
         then
             tput setaf 6
-            echo "Copy all the essential jdk files to $ip  ..."
-            tput sgr0
-            ssh $ip "rm -rf $JDK_FILE"
-            scp -r $JDK_FILE $ip:/opt/
+            echo "Checking java installation in [$ip]"
+            java_checker $ip $user_name
+            if [ $? -gt 0 ]
+            then
+                echo "Copy all the essential jdk files to $ip  ..."
+                tput sgr0
+                ssh $ip "rm -rf $JDK_FILE"
+                scp -r $JDK_FILE $ip:/opt/
+            fi
             tput setaf 6
-            echo "Copy all the essential hadoop files to $ip ..."
+            echo "Checking hadoop files in [$ip]"
             tput sgr0
-            ssh $ip "rm -rf $HADOOP_FILE"
-            scp -r $HADOOP_FILE $user_name@$ip:/home/$user_name/
+            remote_directory_checker $ip $user_name $HADOOP_FILE
+            if [ $? -gt 0 ]
+            then
+                tput setaf 6
+                echo "Copy all the essential hadoop files to $ip ..."
+                tput sgr0
+                ssh $ip "rm -rf $HADOOP_FILE"
+                scp -r $HADOOP_FILE $user_name@$ip:/home/$user_name/
+            fi
         fi
         tput setaf 6
-        echo "Trying to append environment variables to /etc/profile for $ip"
+        echo "Trying to configure environment variables in /etc/profile for $ip"
         tput sgr0
         cat $env_conf_dir | ssh $ip "cat >> /etc/profile" 
     done
@@ -289,7 +302,7 @@ function install_for_all_hosts {
     return 0
 }
 
-#install_for_all_hosts $USER_NAME $ENV_CONF_FILE $IPS_FILE 
+install_for_all_hosts $USER_NAME $ENV_CONF_FILE $IPS_FILE 
 
 #Used to configure the cluster via the hadoop xml configuration files
 function copy_hadoop_configuration_files {
