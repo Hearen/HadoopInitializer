@@ -54,7 +54,40 @@ function update_env {
     echo "export CLASSPATH=\$CLASSPATH:\$HADOOP_HOME/share/hadoop/tools/lib/hadoop-core-1.2.1.jar" >> $ENV_CONF_FILE
 }
 
-update_env
+#update_env
+
+#Root required
+#Used to shut down selinux and firewall and disable them completely and in the end reboot the remotes;
+function clear_the_walls {
+    tput setaf 1
+    echo "Trying to disable selinux and shut down firewall for all the hosts in the cluster..."
+    echo "Remember we will have to reboot the host to get it valid, so please wait until it's done rebooting."
+    tput sgr0
+    ips_file=$1
+    for ip in $(cat $ips_file)
+    do
+        if [[ $ip != $LOCAL_IP_ADDRESS ]]
+        then
+            tput setaf 6
+            echo "Copy selinux configuration file to [$ip]"
+            tput sgr0
+            scp etc/selinux.config $ip:/etc/selinux/config
+            tput setaf 6
+            echo "Trying to stop and disable the firewall in [$ip], and restart it."
+            tput sgr0
+            ssh $ip "systemctl stop firewalld && systemctl disable firewalld && reboot"
+        fi
+    done
+    ip=$LOCAL_IP_ADDRESS
+    tput setaf 6
+    echo "Copy selinux configuration file to [$ip]"
+    tput sgr0
+    scp etc/selinux.config $ip:/etc/selinux/config
+    tput setaf 6
+    echo "Trying to stop and disable the firewall in [$ip], and restart it."
+    tput sgr0
+    ssh $ip "systemctl stop firewalld && systemctl disable firewalld && reboot"
+}
 
 #Root privilege required
 #Add a new user and enable sudo command for each host in the cluster;
@@ -74,9 +107,10 @@ function add_user {
         echo "User [$user_name] added to $ip group wheel successfully!"
         echo "Now you can use sudo to run root commands in $ip." #if till now the sudo command is not available, you might check /etc/sudoers and uncomment wheel group;
     done
+    clear_the_walls $ips_file
 }
 
-#add_user $USER_NAME $IPS_FILE
+#add_user "yang" $IPS_FILE
 
 
 #Root privilege required
@@ -120,6 +154,9 @@ function edit_hosts {
 
 #edit_hosts $IPS_FILE $HOSTS_FILE
 
+
+#clear_the_walls "etc/ip_addresses"
+
 #Hadoop user required;
 #Used to enable ssh-login to one another among hosts without password
 #IP addresses are provided in a file
@@ -128,10 +165,10 @@ function enable_ssh_without_pwd {
     ips_file=$2
     if [ $user_name != `echo "$USER"` ] || [ `id -u` -eq 0 ] #ensure the current user is the user specified by parameter echo $USER is not enough we need id -u to filter further;
     then 
-        echo "The current user should be the working user [$USER_NAME]."
+        echo "The current user should be the working user [$user_name]."
         echo -n "You can use"
         tput setaf 4 
-        echo -n " su $USER_NAME "
+        echo -n " su $user_name "
         tput sgr0
         echo "to achieve this and then re-try."
         return 1
@@ -168,7 +205,7 @@ function enable_ssh_without_pwd {
     return 0
 }
 
-#enable_ssh_without_pwd $USER_NAME $IPS_FILE
+enable_ssh_without_pwd "yang" $IPS_FILE
 
 
 #Root privilege required - stay in the working directory;
