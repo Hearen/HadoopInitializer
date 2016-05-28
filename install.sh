@@ -34,8 +34,8 @@ echo
 tput sgr0
 
 echo "First time to run this program press [0]"
-echo "Start copy configuration files for hadoop cluster press [1]"
-echo "After suing to '$USER_NAME' press [2]"
+echo "Start copy hadoop XML configuration files for hadoop cluster press [1]"
+echo "To enable ssh-login-without-password, you have to sue to '$USER_NAME' first and now press [2]"
 echo "Run a simple test in working user '$USER_NAME' press [3]"
 echo "Press [q] to exit."
 
@@ -181,6 +181,7 @@ do
         exit 0
         ;;
     q)
+        echo
         echo "Leaving the program.."
         exit 0
         ;;
@@ -188,8 +189,8 @@ do
         echo
         echo "Input error!"
         echo "First time to run this program press [0]"
-        echo "Start copy configuration files for hadoop cluster press [1]"
-        echo "After suing to '$USER_NAME' press [2]"
+        echo "Start copy hadoop XML configuration files for hadoop cluster press [1]"
+        echo "To enable ssh-login-without-password, you have to sue to '$USER_NAME' first and now press [2]"
         echo "Run a simple test in working user '$USER_NAME' press [3]"
         echo "Press [q] to exit."
         ;;
