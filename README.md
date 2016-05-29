@@ -27,6 +27,7 @@ Considerate points:
 - before installing and configuring, the program will try to check it first to avoid another redundant installation and configuration;
 - all the features are arranged in separate functions which will reduce the difficulty to understand the inner thread and increase its readability and reusability;
 - critical comments are enclosed to provide as much clue as possible, besides the issues of this repository will also be helpful when encountering some problems;
+- to measure the network distance among hosts, there is also a small script enclosed to check the `ping` distance among hosts - [A to B] is not the same as [B to A];
 
 ToBeDone:
 
