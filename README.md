@@ -13,13 +13,26 @@ Most of the operations the program does:
 - check the permission of the current role;
 - check the network and try to fix it if not available;
 - add working user, set its password and add it to sudoers for later sudo command;
-- via a file containing all the IP addresses of the hosts to change the hostnames and then update /etc/hosts for all hosts;
-- via a file containing all the IP addresses of the hosts to enable login via ssh without password among hosts in the cluster;
+- change the hostnames and then update /etc/hosts for all hosts;
+- enable login via ssh without password among hosts in the cluster;
+- shut down selinux and firewall of the hosts for easy connections among hosts in the cluster;
 - download jdk 1.8 and configure java, javac and jre locally;
 - download hadoop 2.7 and install it locally;
-- via IP addresses of the hosts to configure and activate the newly java and hadoop environment variables;
-- via IP addresses of the hosts to update the xml configuration files in hadoop for each host of the cluster;
+- according to the user to update the java and hadoop environment variables;
+- configure and activate the newly java and hadoop environment variables for all the hosts;
 - start hadoop in master node and check its status in each node in the cluster;
+
+Considerate points:
+
+- before installing and configuring, the program will try to check it first to avoid another redundant installation and configuration;
+- all the features are arranged in separate functions which will reduce the difficulty to understand the inner thread and increase its readability and reusability;
+- critical comments are enclosed to provide as much clue as possible, besides the issues of this repository will also be helpful when encountering some problems;
+
+ToBeDone:
+
+- a simple guide should be enclosed to use this program which should cover the basic and some advanced usage;
+- currently the program will prompt the user to input many repeated redundant information to proceed which can be handled by `expect` easily;
+- the format and interactive information can be misleading sometimes, so it's quite necessary to further test it and update them;
 
 ### Contact
 
