@@ -89,6 +89,8 @@ function clear_the_walls {
     ssh $ip "systemctl stop firewalld && systemctl disable firewalld && reboot"
 }
 
+#clear_the_walls "etc/ip_addresses"
+
 #Root privilege required
 #Add a new user and enable sudo command for each host in the cluster;
 function add_user {
@@ -107,7 +109,6 @@ function add_user {
         echo "User [$user_name] added to $ip group wheel successfully!"
         echo "Now you can use sudo to run root commands in $ip." #if till now the sudo command is not available, you might check /etc/sudoers and uncomment wheel group;
     done
-    clear_the_walls $ips_file
 }
 
 #add_user "yang" $IPS_FILE
@@ -155,7 +156,6 @@ function edit_hosts {
 #edit_hosts $IPS_FILE $HOSTS_FILE
 
 
-#clear_the_walls "etc/ip_addresses"
 
 #Hadoop user required;
 #Used to enable ssh-login to one another among hosts without password
