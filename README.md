@@ -123,7 +123,7 @@ If encountering some problems when installing `stress`:
 * hdparm --direct -t /dev/sda #to check the writing speed in the disk, if unavailable, install it first
 * dd if=/dev/zero of=./test0.img bs=1G count=40 #to create a 40G size empty file which can be used as virtual disk
 
-#### Some benchmarks
+#### Benchmarks
 pi - CPU intensive type
 * hadoop jar /home/hadoop/hadoop/share/hadoop/mapreduce/hadoop-mapreduce-examples-2.7.1.jar pi 16 1000
 
@@ -138,7 +138,7 @@ terasort
 * hadoop jar /home/hadoop/hadoop/share/hadoop/mapreduce/hadoop-mapreduce-examples-2.7.1.jar terasort terasort-input terasort-output
 * hadoop jar /home/hadoop/hadoop/share/hadoop/mapreduce/hadoop-mapreduce-examples-2.7.1.jar teravalidate terasort-output terasort-validate
 
-#### some typical issues
+#### Typical issues
 1. inconsistency clusterID among namenode and datanode: just stop it first,  delete all the tmp directories in all hosts including master and slave and then format the hdfs and at last start the cluster again and check it by `hdfs dfsadmin -report`;
 2. check the ssh-login-without-password among hosts and ensure the firewall and selinux mode are all shut down and disabled which might result in some datanodes un-reachable or invalid in the cluster;
 3. check if you are in safe mode and shut it down by `hdfs dfsadmin -safemode leave`; 
