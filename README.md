@@ -147,13 +147,16 @@ terasort
 Contribution
 ----------
 1. Fork it.
-2. Create a branch (git checkout -b my_markup)
-3. Commit your changes (git commit -am "Added Snarkdown")
-4. Push to the branch (git push origin my_markup)
-5. Open a Pull Request in the repository web page
+2. Create a branch (git checkout -b my_branch)
+3. Commit your changes (git commit -am "fix some serious issues in configuring hadoop locally")
+4. Push to the branch (git push origin my_branch)
+5. Open a Pull Request in web page of the forked repository 
 6. Enjoy a refreshing Diet Coke and carry on with your own stuff
 
-### Contact
+### Contributor
 - Author: LHearen
 - E-mail: LHearen@gmail.com   
 - Created: Fri, 2016-05-06 09:18
+
+### LICENSE
+This program is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation; either version 3 of the License, or (at your option) any later version. See [COPYING](LISCENCE) for more details.
