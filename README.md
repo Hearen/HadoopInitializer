@@ -158,5 +158,5 @@ Contribution
 - E-mail: LHearen@gmail.com   
 - Created: Fri, 2016-05-06 09:18
 
-### LICENSE
-This program is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation; either version 3 of the License, or (at your option) any later version. See [COPYING](LISCENCE) for more details.
+### License
+This program is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation; either version 3 of the License, or (at your option) any later version. See [LISCENCE](LICENSE) for more details.
