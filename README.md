@@ -43,8 +43,13 @@ Usage
 -----
 1. git clone https://github.com/Hearen/HadoopInitializer.git
 2. cd HadoopInitializer
-3. su
-4. ./install.sh
+3. cd etc 
+4. insert the IP addresses of the hosts into ip_addresses in different lines
+5. cd ../hadoop
+6. configure the XML files as each hadoop cluster configuration does in core-site.xml, hdfs-site.xml, mapred-site.xml, master and slaves; as for master you only need to input *hadoop-master* while slaves will be inserted with all the slaves' new hostnames from hadoop-slave1, hadoop-slave2 to hadoop-slaveX, X here refers to the amount of the slaves in the cluster;
+7. cd ..
+8. su
+9. ./install.sh
 and then just follow the program, good luck!
 
 Support
@@ -102,6 +107,7 @@ Three most frequently used commands of `stress`:
 * stress -c 2 -i 1 -m 1 --vm-bytes 128M -t 10s #run 2 cpu intensive, 1 network intensive and 1 memory intensive workers respectively
 
 If encountering some problems when installing `stress`: 
+
 1. 'install epel-release' first, refresh the repolist by 'yum install repolist' and then `yum install stress`;
 2. install it manually `wget http://apt.sw.be/redhat/el7/en/x86_64/rpmforge/RPMS/stress-1.0.2-1.el7.rf.x86_64.rpm` and then `rpm -ivh stress-1.0.2-1.el7.rf.x86_64.rpm`
 
@@ -123,7 +129,8 @@ pi - CPU intensive type
 TestDFSIO - I/O intensive type
 * hadoop jar /home/hadoop/hadoop/share/hadoop/mapreduce/hadoop-mapreduce-client-jobclient-27.1-tests.jar TestDFSIO -write -nrFiles 64 -fileSize 16MB -resFile /tmp/TestDFSIOwrite.txt`
 * hadoop jar /home/hadoop/hadoop/share/hadoop/mapreduce/hadoop-mapreduce-client-jobclient-2.7.1-tests.jar TestDFSIO -read -nrFiles 64 -fileSize 16GB -resFile /tmp/TestDFSIOwrite.txt`
-for more additional about this benchmark, you may want to check [this](hadoop jar /home/hadoop/hadoop-2.7.1/share/hadoop/mapreduce/hadoop-mapreduce-client-jobclient-2.7.1-tests.jar TestDFSIO -read -nrFiles 64 -fileSize 16GB -resFile /tmp/TestDFSIOwrite.txt);
+
+For more additional details about this benchmark, you may want to check [this](hadoop jar /home/hadoop/hadoop-2.7.1/share/hadoop/mapreduce/hadoop-mapreduce-client-jobclient-2.7.1-tests.jar TestDFSIO -read -nrFiles 64 -fileSize 16GB -resFile /tmp/TestDFSIOwrite.txt);
 
 terasort
 * hadoop jar /home/hadoop/hadoop/share/hadoop/mapreduce/hadoop-mapreduce-examples-2.7.1.jar teragen 5000000 terasort-input
