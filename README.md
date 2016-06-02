@@ -50,6 +50,7 @@ Usage
 7. cd ..
 8. su
 9. ./install.sh
+
 and then just follow the program, good luck!
 
 Support
