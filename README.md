@@ -159,4 +159,4 @@ Contribution
 - Created: Fri, 2016-05-06 09:18
 
 ### License
-This program is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation; either version 3 of the License, or (at your option) any later version. See [LISCENCE](LICENSE) for more details.
+This program is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation; either version 3 of the License, or (at your option) any later version. See [LICENSE](LICENSE) for more details.
