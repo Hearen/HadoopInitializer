@@ -27,18 +27,6 @@ Follow-up
 - to measure the network distance among hosts, there is also a small script enclosed to check the `ping` distance among hosts - [A to B] is not the same as [B to A];
 - to ease some burden of cgroup configuration, a cgroup_controller.sh script is enclosed to configure the cgroup automatically among hosts.
 
-To be updated
----------------
-- a simple guide should be enclosed to use this program which should cover the basic and some advanced usage;
-- currently the program will prompt the user to input many repeated redundant information to proceed which can be handled by [expect](http://expect.sourceforge.net) easily;
-- the format and interactive information can be misleading sometimes, so it's quite necessary to further test it and update them;
-
-Of course there are still many aspects that can be further optimized including the following parts: fault-tolerance, portability and maintainability; 
-- as for fault-tolerance, all the program does is to prompt the failure and essential debugging information if one stage failed but it cannot roll back to the previous stage; 
-- for portability, the operating system is fixed on the CentOS 7.1, there are some inconsistency among different systems in some critical operations so it's quite uneasy to make this program run in another system;  
-- when it comes to maintainability, the jdk 1.8 and hadoop 2.7 are both hard-coded which means when encountering different versions there will be different configuration processes, the whole program can be invalid but of course still parts of the program can be used to assist and guide the user to complete the configuration.
-
-
 Usage
 -----
 1. git clone https://github.com/Hearen/HadoopInitializer.git
@@ -66,6 +54,7 @@ There are lots of issues that might occur during the configuration and also some
 * hadoop fs namenode -format #format the whole hdfs file system which is frequently used to correct some errors
 
 #### cgroup
+There is a [cgroup_configurer.sh](tools/cgroup_configurer.sh) in tools directory which can help you a little bit for cgroup configurations as for details you might intend to check the details as follows:
 * yum install libcgroup\* #to install cgroup in CentOS 7.1
 * systemctl start cgconfig && systemctl enable cgconfig
 * systemctl start cgred && systemctl enable cgred
@@ -143,6 +132,20 @@ terasort
 2. check the ssh-login-without-password among hosts and ensure the firewall and selinux mode are all shut down and disabled which might result in some datanodes un-reachable or invalid in the cluster;
 3. check if you are in safe mode and shut it down by `hdfs dfsadmin -safemode leave`; 
 4. still not working, check the logs in namenode and datanode using `ls -t` in $HADOOP_HOME/logs and you can easily check the latest log of the namenode or datanode which should be helpful for debugging.
+
+To be updated
+---------------
+There are several quite specific flaws that can be fixed as follows:
+- a simple guide should be enclosed to use this program which should cover the basic and some advanced usage;
+- currently the program will prompt the user to input many repeated redundant information to proceed which can be handled by [expect](http://expect.sourceforge.net) easily;
+- the format and interactive information can be misleading sometimes, so it's quite necessary to further test it and update them;
+
+Of course there are still many aspects that can be further optimized including the following parts: fault-tolerance, portability and maintainability; 
+- as for fault-tolerance, all the program does is to prompt the failure and essential debugging information if one stage failed but it cannot roll back to the previous stage; 
+- for portability, the operating system is fixed on the CentOS 7.1, there are some inconsistency among different systems in some critical operations so it's quite uneasy to make this program run in another system;  
+- when it comes to maintainability, the jdk 1.8 and hadoop 2.7 are both hard-coded which means when encountering different versions there will be different configuration processes, the whole program can be invalid but of course still parts of the program can be used to assist and guide the user to complete the configuration.
+
+
 
 Contribution
 ----------

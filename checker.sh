@@ -11,7 +11,7 @@
 #exec 2>>err.log
 
 
-. ./login.sh
+. tools/login.sh
 ###############################################################
 #Used to restore and backup ks.cfg isolinux.cfg for iso-making
 ###############################################################
