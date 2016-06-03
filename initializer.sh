@@ -54,7 +54,7 @@ function update_env {
     echo "export CLASSPATH=\$CLASSPATH:\$HADOOP_HOME/share/hadoop/tools/lib/hadoop-core-1.2.1.jar" >> $ENV_CONF_FILE
 }
 
-#update_env
+update_env
 
 #Root required
 #Used to shut down selinux and firewall and disable them completely and in the end reboot the remotes;
@@ -205,7 +205,7 @@ function enable_ssh_without_pwd {
     return 0
 }
 
-enable_ssh_without_pwd "yang" $IPS_FILE
+#enable_ssh_without_pwd "yang" $IPS_FILE
 
 
 #Root privilege required - stay in the working directory;

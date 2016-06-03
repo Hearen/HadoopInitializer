@@ -11,7 +11,11 @@
 #exec 2>>err.log
 
 
-. tools/login.sh
+source tools/login.sh 2>/dev/null
+if [ $? -gt 0 ]
+then
+    source login.sh 2>/dev/null
+fi
 ###############################################################
 #Used to restore and backup ks.cfg isolinux.cfg for iso-making
 ###############################################################
