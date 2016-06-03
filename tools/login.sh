@@ -45,4 +45,4 @@ function login_network {
 #echo "Press Enter to use default password 111111"
 #tput sgr0
 #read -p "Password:" password
-login_network $userName $password
+#login_network $userName $password
