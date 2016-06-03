@@ -32,4 +32,5 @@ else
     echo "Leaving..."
     exit 1
 fi
+check_package "libcgroup*"
 cgroup_configurer $IPS_FILE
