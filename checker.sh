@@ -74,19 +74,6 @@ function check_cfg {
 }
 
 
-#############################
-#Using a given test site to
-#Check the network and return
-#Http code 200 - okay
-#############################
-function check_network {
-   test_site=$1
-   timeout_max=2    #seconds before time out
-   return_code=`curl -o /dev/null/ --connect-timeout $timeout_max -s -w %{http_code} $test_site`
-   echo $return_code
-}
-
-
 ####################################
 #Check the network and try to fix it
 ####################################

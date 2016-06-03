@@ -51,6 +51,7 @@ function update_env {
     echo "export CLASSPATH=.:\$CLASSPATH:\$JAVA_HOME/lib:\$JRE_HOME/lib" >> $ENV_CONF_FILE
     echo "export PATH=\$PATH:\$JAVA_HOME/bin:\$JRE_HOME/bin" >> $ENV_CONF_FILE
 
+    echo >> $ENV_CONF_FILE
     echo "#configure hadoop environment" >> $ENV_CONF_FILE
     echo "export HADOOP_HOME=/home/$USER_NAME/hadoop" >> $ENV_CONF_FILE
     echo "export PATH=\$PATH:\$HADOOP_HOME/bin:\$HADOOP_HOME/sbin" >> $ENV_CONF_FILE
@@ -59,7 +60,7 @@ function update_env {
     echo "$ENV_CONF_FILE updated!"
 }
 
-update_env
+#update_env
 
 #Root required
 #Used to shut down selinux and firewall and disable them completely and in the end reboot the remotes;
