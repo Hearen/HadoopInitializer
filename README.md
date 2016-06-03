@@ -43,7 +43,12 @@ and then just follow the program, good luck!
 
 Support
 -------
-There are lots of issues that might occur during the configuration and also some brilliant tools that might be helpful.
+There are lots of issues that might occur during the configuration, so there are some brilliant tools that might be helpful when encountering some problems. 
+- [clear_walls](tools/clear_walls.sh) used to shut down firewall and selinux mode of the hosts
+- [cgroup_configurer](tools/cgroup_configurer.sh) used to configure the cgroup of course before which you are required to set up the configuration files [cgconfig.cong](etc/cgconfig.conf) and [cgrules](etc/cgrules)
+- [distance_checker](tools/distance_checker.sh) used to check the `ping` network distance among hosts
+- [logout](tools/logout.sh) used to log out the account of ISCAS internal network
+- [login](tools/login.sh) used to log in the ISCAS internal network with a certain account 
 
 #### hadoop
 * stop-all.sh #to stop all the hadoop service;
