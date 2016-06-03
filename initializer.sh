@@ -13,7 +13,11 @@
 #           install and configure java and hadoop for all the hosts in the cluster;
 #####################################################################################
 
-. ./checker.sh
+source checker.sh 2>/dev/null
+if [ $? -gt 0 ]
+then
+    source ../checker.sh 2>/dev/null
+fi
 
 #Default user name shared by the cluster;
 USER_NAME="hadoop"
@@ -21,8 +25,8 @@ USER_NAME="hadoop"
 LOCAL_IP_ADDRESS=$(hostname --ip-address) #get the ip address of the current machine;
 
 #Basic configuration file of the program;
-ENV_CONF_FILE="etc/env.conf"
-IPS_FILE="etc/ip_addresses"
+ENV_CONF_FILE=${ENV_CONF_FILE:-"etc/env.conf"}
+IPS_FILE=${IPS_FILE:-"etc/ip_addresses"}
 HOSTS_FILE="etc/hosts"
 
 #Default location where java installed;
@@ -52,6 +56,7 @@ function update_env {
     echo "export PATH=\$PATH:\$HADOOP_HOME/bin:\$HADOOP_HOME/sbin" >> $ENV_CONF_FILE
     echo "export HADOOP_HOME_WARN_SUPPRESS=1" >> $ENV_CONF_FILE
     echo "export CLASSPATH=\$CLASSPATH:\$HADOOP_HOME/share/hadoop/tools/lib/hadoop-core-1.2.1.jar" >> $ENV_CONF_FILE
+    echo "$ENV_CONF_FILE updated!"
 }
 
 update_env
@@ -61,7 +66,10 @@ update_env
 function clear_the_walls {
     tput setaf 1
     echo "Trying to disable selinux and shut down firewall for all the hosts in the cluster..."
-    echo "Remember we will have to reboot the host to get it valid, so please wait until it's done rebooting."
+    echo -n "Remember we will have to reboot the host to get it valid, so please wait until it's done"
+    tput setaf 1
+    echo " rebooting."
+    tput sgr0
     tput sgr0
     ips_file=$1
     for ip in $(cat $ips_file)

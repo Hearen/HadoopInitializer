@@ -33,9 +33,8 @@ echo
 echo 
 tput sgr0
 
-echo "First time to run this program press [0]"
-echo "After reboot to disable firewall and selinux, now press [1] to install."
-echo "Start copy hadoop XML configuration files for hadoop cluster press [2]"
+echo "First time to run this program press [1] to install."
+echo "Copy hadoop XML configuration files for hadoop cluster press [2]"
 echo "To enable ssh-login-without-password, you have to sue to '$USER_NAME' first and now press [3]"
 echo "Run a simple test in working user '$USER_NAME' press [4]"
 echo "Press [q] to exit."
@@ -44,45 +43,6 @@ while [ 1 ]
 do
     read -n1 -p "What's your choice: " choice
     case $choice in
-    0)
-        echo
-        echo "First we need do some checking..."
-
-        #Ensure root privilege;
-        echo
-        check_permission 
-        if [ $? -eq 0  ] 
-        then 
-            echo "Permission Granted." 
-        else 
-            echo "Permission Denied!" 
-            exit 1
-        fi
-
-        #Update env.conf
-        update_env
-
-        #Ensure the network connection is okay;
-        echo
-        check_fix_network
-        if [ $? -eq 0 ]
-        then
-            echo "Connection Okay!"
-        else
-            echo "Failed to fix the connection."
-            echo "Leaving the program..."
-            exit 1
-        fi
-
-        #Ensure essential packages are installed - ssh and scp
-        echo
-        check_essential_packages
-        if [ $? -gt 0 ]
-        then 
-            echo "Leaving the program..."
-        fi
-        clear_the_walls $IPS_FILE
-        ;;
     1)
         echo
         echo "First we need do some checking..."
@@ -120,6 +80,7 @@ do
         then 
             echo "Leaving the program..."
         fi
+
         #Add the user for each host and meantime enable sudo command;
         echo
         tput setaf 6
