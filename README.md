@@ -21,6 +21,7 @@ Features
 
 Follow-up
 ------------------
+Some auxiliary features are well accomplished to make this program more readable, robust and maintainable.
 - before installing and configuring, the program will try to check it first to avoid another redundant installation and configuration;
 - all the features are arranged in separate functions which will reduce the difficulty to understand the inner thread and increase its readability and reusability;
 - critical comments are enclosed to provide as much clue as possible, besides the issues of this repository will also be helpful when encountering some problems;
@@ -42,6 +43,7 @@ and then just follow the program, good luck!
 
 Support
 -------
+This part will cover the enclosed assistant scripts in tools, basic hadoop commands, cgroup configuration and usage,  stress used to control the CPU utilization, some useful Linux commands and the benchmarks used widely.
 
 #### tools
 There are lots of issues that might occur during the configuration, so there are some convenient tools that might be helpful when encountering some problems. 
@@ -121,6 +123,7 @@ If encountering some problems when installing `stress`:
 
 #### Benchmarks
 There are lots of built-in benchmarks which we can find in hadoop `hadoop jar /home/hadoop/hadoop/share/hadoop/mapreduce/hadoop-mapreduce-examples-2.7.1` or `hadoop jar /home/hadoop/hadoop/share/hadoop/mapreduce/hadoop-mapreduce-client-jobclient-27.1-tests.jar`but as for the most popular ones, they will be CPU intensive type - **pi**, I/O intensive - **TestDFSIO** and integrated and the most popular - **terasort**. 
+
 pi - CPU intensive type
 * hadoop jar /home/hadoop/hadoop/share/hadoop/mapreduce/hadoop-mapreduce-examples-2.7.1.jar pi 16 1000
 
