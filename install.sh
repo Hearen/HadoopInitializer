@@ -7,8 +7,17 @@
 #Description : Used to configure hadoop cluster automatically.
 #####################################################################################
 
-. ./checker.sh
-. ./initializer.sh
+source checker.sh
+if [ $? -gt 0 ]
+then
+    source ../checker.sh 2>/dev/null
+fi
+
+source initializer.sh
+if [ $? -gt 0 ]
+then
+    source ../initializer.sh 2>/dev/null
+fi
 
 clear
 tput setaf 1

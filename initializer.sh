@@ -43,7 +43,9 @@ function update_local_IP {
     for ip in $(cat $IPS_FILE)
     do
         if [[ *"$ip"* == $LOCAL_IP_ADDRESS ]]
+	then
             LOCAL_IP_ADDRESS=$ip
+	fi
     done
 }
 
