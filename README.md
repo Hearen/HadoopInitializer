@@ -107,7 +107,7 @@ Three most frequently used commands of `stress`:
 
 If encountering some problems when installing `stress`: 
 
-1. 'install epel-release' first, refresh the repolist by 'yum install repolist' and then `yum install stress`;
+1. `install epel-release` first, refresh the repolist by `yum install repolist` and then `yum install stress`;
 2. install it manually `wget http://apt.sw.be/redhat/el7/en/x86_64/rpmforge/RPMS/stress-1.0.2-1.el7.rf.x86_64.rpm` and then `rpm -ivh stress-1.0.2-1.el7.rf.x86_64.rpm`
 
 #### Some useful commands
@@ -140,6 +140,7 @@ terasort
 
 #### Typical issues
 There are some issues which can be tricky for newbies in hadoop that I met myself and solved with the following steps. I hope they might ease some labor of your searching.
+
 1. inconsistency clusterID among namenode and datanode: just stop it first,  delete all the tmp directories in all hosts including master and slave and then format the hdfs and at last start the cluster again and check it by `hdfs dfsadmin -report`;
 2. check the ssh-login-without-password among hosts and ensure the firewall and selinux mode are all shut down and disabled which might result in some datanodes un-reachable or invalid in the cluster;
 3. check if you are in safe mode and shut it down by `hdfs dfsadmin -safemode leave`; 
