@@ -24,8 +24,6 @@ Follow-up
 - before installing and configuring, the program will try to check it first to avoid another redundant installation and configuration;
 - all the features are arranged in separate functions which will reduce the difficulty to understand the inner thread and increase its readability and reusability;
 - critical comments are enclosed to provide as much clue as possible, besides the issues of this repository will also be helpful when encountering some problems;
-- to measure the network distance among hosts, there is also a small script enclosed to check the `ping` distance among hosts - [A to B] is not the same as [B to A];
-- to ease some burden of cgroup configuration, a cgroup_controller.sh script is enclosed to configure the cgroup automatically among hosts.
 
 Usage
 -----
@@ -44,7 +42,9 @@ and then just follow the program, good luck!
 
 Support
 -------
-There are lots of issues that might occur during the configuration, so there are some brilliant tools that might be helpful when encountering some problems. 
+
+#### tools
+There are lots of issues that might occur during the configuration, so there are some convenient tools that might be helpful when encountering some problems. 
 - [clear_walls.sh](tools/clear_walls.sh) used to shut down firewall and selinux mode of the hosts
 - [cgroup_configurer.sh](tools/cgroup_configurer.sh) used to configure the cgroup of course before which you are required to set up the configuration files [cgconfig.conf](etc/cgconfig.conf) and [cgrules.conf](etc/cgrules.conf)
 - [distance_checker.sh](tools/distance_checker.sh) used to check the `ping` network distance among hosts
@@ -52,6 +52,7 @@ There are lots of issues that might occur during the configuration, so there are
 - [login.sh](tools/login.sh) used to log in the ISCAS internal network with a certain account 
 
 #### hadoop
+Some frequently used commands in hadoop cluster management, for more detailed information you might need to check its [official site](https://hadoop.apache.org/docs/r2.7.1/).
 * stop-all.sh #to stop all the hadoop service;
 * start-all.sh #to start the hadoop service;
 * hdfs dfsadmin -report #to report the status of the cluster which is quite the same as opening a browser and access `$master_ip_address:50070`
@@ -119,6 +120,7 @@ If encountering some problems when installing `stress`:
 * dd if=/dev/zero of=./test0.img bs=1G count=40 #to create a 40G size empty file which can be used as virtual disk
 
 #### Benchmarks
+There are lots of built-in benchmarks which we can find in hadoop `hadoop jar /home/hadoop/hadoop/share/hadoop/mapreduce/hadoop-mapreduce-examples-2.7.1` or `hadoop jar /home/hadoop/hadoop/share/hadoop/mapreduce/hadoop-mapreduce-client-jobclient-27.1-tests.jar`but as for the most popular ones, they will be CPU intensive type - **pi**, I/O intensive - **TestDFSIO** and integrated and the most popular - **terasort**. 
 pi - CPU intensive type
 * hadoop jar /home/hadoop/hadoop/share/hadoop/mapreduce/hadoop-mapreduce-examples-2.7.1.jar pi 16 1000
 
@@ -134,6 +136,7 @@ terasort
 * hadoop jar /home/hadoop/hadoop/share/hadoop/mapreduce/hadoop-mapreduce-examples-2.7.1.jar teravalidate terasort-output terasort-validate
 
 #### Typical issues
+There are some issues which can be tricky for newbies in hadoop that I met myself and solved with the following steps. I hope they might ease some labor of your searching.
 1. inconsistency clusterID among namenode and datanode: just stop it first,  delete all the tmp directories in all hosts including master and slave and then format the hdfs and at last start the cluster again and check it by `hdfs dfsadmin -report`;
 2. check the ssh-login-without-password among hosts and ensure the firewall and selinux mode are all shut down and disabled which might result in some datanodes un-reachable or invalid in the cluster;
 3. check if you are in safe mode and shut it down by `hdfs dfsadmin -safemode leave`; 
