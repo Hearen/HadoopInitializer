@@ -22,8 +22,7 @@ fi
 #Default user name shared by the cluster;
 USER_NAME="hadoop"
 
-LOCAL_IP_ADDRESS=$(hostname --ip-address) #get the ip address of the current machine;
-
+LOCAL_IP_ADDRESS=$(hostname -I) #there can be several IPs concatenated by white space 
 #Basic configuration file of the program;
 ENV_CONF_FILE=${ENV_CONF_FILE:-"etc/env.conf"}
 IPS_FILE=${IPS_FILE:-"etc/ip_addresses"}
@@ -40,6 +39,15 @@ HADOOP_UNZIPPED_FILE="/home/$USER_NAME/hadoop-2.7.1"
 HADOOP_UNZIPPED_DIR="/home/$USER_NAME/"
 HADOOP_FILE="/home/$USER_NAME/hadoop"
 
+function update_local_IP {
+    for ip in $(cat $IPS_FILE)
+    do
+        if [[ *"$ip"* == $LOCAL_IP_ADDRESS ]]
+            LOCAL_IP_ADDRESS=$ip
+    done
+}
+
+update_local_IP
 
 #Used to update the env.conf of the program according to the user
 function update_env {
@@ -75,7 +83,7 @@ function clear_the_walls {
     ips_file=$1
     for ip in $(cat $ips_file)
     do
-        if [[ $ip != $LOCAL_IP_ADDRESS ]]
+        if [[ *"$ip"* != $LOCAL_IP_ADDRESS ]]
         then
             tput setaf 6
             echo "Copy selinux configuration file to [$ip]"
@@ -302,7 +310,7 @@ function install_for_all_hosts {
     for ip in $(cat $ips_file)
     do
         echo  "[$LOCAL_IP_ADDRESS] connected to [$ip]"
-        if [[ $ip != $LOCAL_IP_ADDRESS ]]
+        if [[ *"$ip"* != $LOCAL_IP_ADDRESS ]]
         then
             tput setaf 6
             echo "Checking java installation in [$ip]"
