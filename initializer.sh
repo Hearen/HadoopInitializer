@@ -92,7 +92,7 @@ function clear_the_walls {
             tput setaf 6
             echo "Copy selinux configuration file to [$ip]"
             tput sgr0
-            scp /etc/selinux/config $ip:/etc/selinux/config
+            scp etc/selinux.config $ip:/etc/selinux/
             tput setaf 6
             echo "Trying to stop and disable the firewall in [$ip], and restart it."
             tput sgr0
