@@ -51,6 +51,7 @@ function update_local_IP {
 
 update_local_IP
 
+
 #Used to update the env.conf of the program according to the user
 function update_env {
     echo "Updating $ENV_CONF_FILE"
@@ -85,12 +86,13 @@ function clear_the_walls {
     ips_file=$1
     for ip in $(cat $ips_file)
     do
-        if [[ *"$ip"* != $LOCAL_IP_ADDRESS ]]
+	if [[ -z $(echo $ip | grep $LOCAL_IP_ADDRESS) ]]
         then
+	    echo "$ip is not equal to $LOCAL_IP_ADDRESS"
             tput setaf 6
             echo "Copy selinux configuration file to [$ip]"
             tput sgr0
-            scp etc/selinux.config $ip:/etc/selinux/config
+            scp /etc/selinux/config $ip:/etc/selinux/config
             tput setaf 6
             echo "Trying to stop and disable the firewall in [$ip], and restart it."
             tput sgr0
@@ -312,7 +314,7 @@ function install_for_all_hosts {
     for ip in $(cat $ips_file)
     do
         echo  "[$LOCAL_IP_ADDRESS] connected to [$ip]"
-        if [[ *"$ip"* != $LOCAL_IP_ADDRESS ]]
+	if [[ -z $(echo $ip | grep $LOCAL_IP_ADDRESS) ]]
         then
             tput setaf 6
             echo "Checking java installation in [$ip]"
