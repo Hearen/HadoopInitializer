@@ -54,7 +54,7 @@ do
     case $choice in
     1)
         echo
-        echo "First we need do some checking..."
+        echo "First we need to do some checking..."
 
         #Ensure root privilege;
         echo

@@ -146,7 +146,8 @@ There are some issues which can be tricky for newbies in hadoop that I met mysel
 1. inconsistency clusterID among namenode and datanode: just stop it first,  delete all the tmp directories in all hosts including master and slave and then format the hdfs and at last start the cluster again and check it by `hdfs dfsadmin -report`;
 2. check the ssh-login-without-password among hosts and ensure the firewall and selinux mode are all shut down and disabled which might result in some datanodes un-reachable or invalid in the cluster;
 3. check if you are in safe mode and shut it down by `hdfs dfsadmin -safemode leave`; 
-4. still not working, check the logs in namenode and datanode using `ls -t` in $HADOOP_HOME/logs and you can easily check the latest log of the namenode or datanode which should be helpful for debugging.
+4. still not working, check the logs in namenode and datanode using `ls -t` in $HADOOP_HOME/logs and you can easily check the latest log of the namenode or datanode which should be helpful for debugging;
+5. when it only comes to the `JAVA_HOME is not set` problem, just hard code it in HADOOP_HOME/etc/hadoop/hadoop-env.sh.
 
 To be updated
 ---------------
