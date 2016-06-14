@@ -5,7 +5,8 @@
 #Time        : Wed, 2016-05-25 19:16
 #Description : Used to check the network distance among hosts;
 #####################################################################################
-IPS_FILE="../etc/ip_addresses"
+cd ..
+IPS_FILE="etc/ip_addresses"
 function distance_checker {
     ips_file=$1
     count=$2

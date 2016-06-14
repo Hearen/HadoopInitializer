@@ -88,11 +88,11 @@ function clear_the_walls {
     do
 	if [[ -z $(echo $ip | grep $LOCAL_IP_ADDRESS) ]]
         then
-	    echo "$ip is not equal to $LOCAL_IP_ADDRESS"
             tput setaf 6
             echo "Copy selinux configuration file to [$ip]"
             tput sgr0
-            scp etc/selinux.config $ip:/etc/selinux/
+	    cat etc/selinux.config | ssh $ip "cat > /etc/selinux/config"
+            #scp etc/selinux.config $ip:/etc/selinux/config
             tput setaf 6
             echo "Trying to stop and disable the firewall in [$ip], and restart it."
             tput sgr0
@@ -103,7 +103,7 @@ function clear_the_walls {
     tput setaf 6
     echo "Copy selinux configuration file to [$ip]"
     tput sgr0
-    scp etc/selinux.config $ip:/etc/selinux/config
+    cat etc/selinux.config | ssh $ip "cat > /etc/selinux/config"
     tput setaf 6
     echo "Trying to stop and disable the firewall in [$ip], and restart it."
     tput sgr0

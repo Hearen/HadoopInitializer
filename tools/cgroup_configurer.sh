@@ -7,10 +7,12 @@
 #Description : Used to configure cgroup by several configuration files;
 #####################################################################################
 
-. ../checker.sh
+cd ..
 
-IPS_FILE="../etc/ip_addresses"
-CG_FILE="../etc/cg*"
+. checker.sh
+
+CG_FILE="etc/cg*"
+
 #Root required
 function cgroup_configurer {
     ips_file=$1
