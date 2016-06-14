@@ -116,5 +116,7 @@ read -p "The maximum rate [unit: mbps]: " max
 tc qdisc del dev $interface root
 tc qdisc add dev $interface handle 1: root htb
 tc class add dev $interface parent 1: classid 1:1 htb rate "$max"mbps
+tputs setaf 1
 echo "Make some checking..."
+tputs sgr0
 tc qdisc show dev $interface && tc class show dev $interface
