@@ -50,6 +50,8 @@ There are lots of issues that might occur during the configuration, so there are
 - [clear_walls.sh](tools/clear_walls.sh) used to shut down firewall and selinux mode of the hosts
 - [cgroup_configurer.sh](tools/cgroup_configurer.sh) used to configure the cgroup of course before which you are required to set up the configuration files [cgconfig.conf](etc/cgconfig.conf) and [cgrules.conf](etc/cgrules.conf)
 - [distance_checker.sh](tools/distance_checker.sh) used to check the `ping` network distance among hosts
+- [transfer.sh](tools/transfer.sh) which is to use [ips_file](tools/etc/ips_file) to transfer scripts to configure the host accordingly
+- [traffic_controller.sh](tools/traffic_controller.sh) is to take advantage of [tc](http://lartc.org/manpages/tc.txt) to throttle the maximum network rate of certain host
 - [logout.sh](tools/logout.sh) used to log out the account of ISCAS internal network
 - [login.sh](tools/login.sh) used to log in the ISCAS internal network with a certain account 
 
