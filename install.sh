@@ -43,7 +43,7 @@ echo
 tput sgr0
 
 echo "First time to run this program press [1] to install."
-echo "Copy hadoop XML configuration files for hadoop cluster press [2]"
+echo "Copy hadoop configuration files for hadoop cluster press [2]"
 echo "To enable ssh-login-without-password, you have to sue to '$USER_NAME' first and now press [3]"
 echo "Run a simple test in working user '$USER_NAME' press [4]"
 echo "Press [q] to exit."
