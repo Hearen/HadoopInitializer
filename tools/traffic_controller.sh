@@ -86,7 +86,7 @@ function check_permission {
     fi
 }
 
-echo "First we need do some checking..."
+echo "First we need to do some checking..."
 
 #Ensure root privilege;
 echo
