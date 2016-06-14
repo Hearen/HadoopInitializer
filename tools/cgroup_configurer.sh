@@ -10,12 +10,14 @@
 cd ..
 
 . checker.sh
+. initializer.sh
 
 CG_FILE="etc/cg*"
 
 #Root required
 function cgroup_configurer {
     ips_file=$1
+    echo $ips_file
     for ip in $(cat $ips_file)
     do
         echo "Start to copy cgroup configuration files to [$ip]"
