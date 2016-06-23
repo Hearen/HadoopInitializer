@@ -130,8 +130,8 @@ pi - CPU intensive type
 * hadoop jar /home/hadoop/hadoop/share/hadoop/mapreduce/hadoop-mapreduce-examples-2.7.1.jar pi 16 1000
 
 TestDFSIO - I/O intensive type
-* hadoop jar /home/hadoop/hadoop/share/hadoop/mapreduce/hadoop-mapreduce-client-jobclient-27.1-tests.jar TestDFSIO -write -nrFiles 64 -fileSize 16MB -resFile /tmp/TestDFSIOwrite.txt`
-* hadoop jar /home/hadoop/hadoop/share/hadoop/mapreduce/hadoop-mapreduce-client-jobclient-2.7.1-tests.jar TestDFSIO -read -nrFiles 64 -fileSize 16GB -resFile /tmp/TestDFSIOwrite.txt`
+* hadoop jar /home/hadoop/hadoop/share/hadoop/mapreduce/hadoop-mapreduce-client-jobclient-2.7.1-tests.jar TestDFSIO -write -nrFiles 64 -fileSize 16MB -resFile /tmp/TestDFSIOwrite.txt
+* hadoop jar /home/hadoop/hadoop/share/hadoop/mapreduce/hadoop-mapreduce-client-jobclient-2.7.1-tests.jar TestDFSIO -read -nrFiles 64 -fileSize 16GB -resFile /tmp/TestDFSIOwrite.txt
 
 For more additional details about this benchmark, you may want to check [this](hadoop jar /home/hadoop/hadoop-2.7.1/share/hadoop/mapreduce/hadoop-mapreduce-client-jobclient-2.7.1-tests.jar TestDFSIO -read -nrFiles 64 -fileSize 16GB -resFile /tmp/TestDFSIOwrite.txt);
 
