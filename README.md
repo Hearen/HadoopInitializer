@@ -61,7 +61,7 @@ Some frequently used commands in hadoop cluster management, for more detailed in
 * start-all.sh #to start the hadoop service;
 * hdfs dfsadmin -report #to report the status of the cluster which is quite the same as opening a browser and access `$master_ip_address:50070`
 * hdfs dfsadmin -safemode leave #leave the safe mode to avoid some checking and restrictions which might cause some errors in testing
-* hadoop fs -ls / #to list the files in the root directory of hdfs, [more](https://hadoop.apache.org/docs/r2.7.1/hadoop-project-dist/hadoop-common/FileSystemShell.html#mkdir)
+* hadoop fs -ls / #to list the files in the root directory of hdfs, [more...](https://hadoop.apache.org/docs/r2.7.1/hadoop-project-dist/hadoop-common/FileSystemShell.html#mkdir)
 * hadoop fs namenode -format #format the whole hdfs file system which is frequently used to correct some errors
 
 #### cgroup
