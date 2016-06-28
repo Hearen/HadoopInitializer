@@ -33,7 +33,7 @@ Usage
 3. cd etc 
 4. insert the IP addresses of the hosts into [ip_addresses](etc/ip_addresses) in different lines
 5. cd ../hadoop
-6. configure the XML files as each hadoop cluster configuration does in [core-site.xml](hadoop/core-site.xml), [hdfs-site.xml](hadoop/hdfs-site.xml), [mapred-site.xml](hadoop/mapred-site.xml), [master](hadoop/master) and [slaves](hadoop/slaves); as for master you only need to input *hadoop-master* while slaves will be inserted with all the slaves' new hostnames from hadoop-slave1, hadoop-slave2 to hadoop-slaveX, **X** here refers to the amount of the slaves in the cluster;
+6. configure the XML files as each hadoop cluster configuration does in [core-site.xml](hadoop/core-site.xml), [hdfs-site.xml](hadoop/hdfs-site.xml), [mapred-site.xml](hadoop/mapred-site.xml), [master](hadoop/masters) and [slaves](hadoop/slaves); as for master you only need to input *hadoop-master* while slaves will be inserted with all the slaves' new hostnames from hadoop-slave1, hadoop-slave2 to hadoop-slaveX, **X** here refers to the amount of the slaves in the cluster;
 7. cd ../tools
 8. ./clear_walls.sh #shut down and disable the firewall and selinux mode for all hosts, there will be a rebooting, so just be patient and have a bottle of iced beer
 9. su #after rebooting, log in the master and gain root privilege
