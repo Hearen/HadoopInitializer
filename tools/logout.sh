@@ -30,4 +30,4 @@ function logout_network {
     done
 }
 
-#logout_network
+logout_network

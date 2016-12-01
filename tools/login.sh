@@ -4,20 +4,22 @@
 # E-mail: LHearen@126.com 
 ##########################
 
-#Using a given test site to check the network and return
-#Http code 200 - okay
+# Using a given test site to check the network 
+# And return Http code - 200->okay
 function check_network {
    test_site=$1
-   timeout_max=2    #seconds before time out
+   timeout_max=2    # seconds
    return_code=`curl -o /dev/null/ --connect-timeout $timeout_max -s -w %{http_code} $test_site`
    echo $return_code
 }
 
-#Log in to access external network in ISCAS
+# Log in to access external network in ISCAS
 function login_network {
     userName=${1:-"luosonglei14"}
     password=${2:-"111111"}
-    while [ 1 ]
+    max_try=${3:-3}
+    count=1
+    while [ "$count" -le "$max_try" ]
     do
         return_code=$(check_network "baidu.com")
         if [ $return_code -eq 200 ]
@@ -25,16 +27,21 @@ function login_network {
             tput setaf 2
             echo "Network available"
             tput sgr0
-            break
+            return 0
         else
+            tput setaf 1
             echo "Connection error"
-            echo "Trying to fix it..."
+            tput sgr0
+            echo "Trying to fix it..." ": try $count"
             curl -d "username=$userName&password=$password&pwd=$password&secret=true" http://133.133.133.150/webAuth/ 1>/dev/null 2>/dev/null
             sleep 1
         fi
+        count=$[count+1]
     done
+    return 1
 }
 
+# To separately use this script as a log-in script, just uncomment the following lines;
 #clear
 #echo "Using a fixed account to login - simulating browser login process."
 #tput setaf 6
@@ -46,3 +53,4 @@ function login_network {
 #tput sgr0
 #read -p "Password:" password
 #login_network $userName $password
+

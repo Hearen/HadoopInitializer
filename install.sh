@@ -1,10 +1,10 @@
 #!/bin/bash
 
 #####################################################################################
-#Author      : LHearen
-#E-mail      : LHearen@gmail.com
-#Time        : Sun, 2016-05-08 09:48
-#Description : Used to configure hadoop cluster automatically.
+#author      : lhearen
+#e-mail      : lhearen@gmail.com
+#time        : sun, 2016-05-08 09:48
+#description : used to configure hadoop cluster automatically.
 #####################################################################################
 
 source checker.sh
