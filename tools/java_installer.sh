@@ -3,12 +3,14 @@
 #####################################################################################
 #Author      : LHearen
 #E-mail      : LHearen@gmail.com
-#Time        : Thu, 2016-05-05 11:14
-#Description : Initialize and update the default parameters;
+#Time        : Thu, 2016-12-01 10:50
+#Description : Download the JDK, install and configure it locally;
 #####################################################################################
 
-#Root privilege required
-#Download jdk1.8 and configure java, javac and jre;
+# Root privilege required
+# Download jdk1.8 and configure java, javac and jre;
+# 
+# wget and tar is required
 function install_jdk_local {
     java_checker
     if [ $? -gt 0 ]
@@ -40,4 +42,5 @@ function install_jdk_local {
     fi
 }
 
+# To execute the program directly, uncomment the following lines
 #install_jdk_local

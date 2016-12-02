@@ -1,1 +1,4 @@
 133.133.134.130 hadoop-master
+133.133.135.37 hadoop-slave1
+133.133.135.34 hadoop-slave2
+133.133.131.18 hadoop-slave3

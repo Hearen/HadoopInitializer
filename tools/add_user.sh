@@ -33,14 +33,10 @@ function add_user {
 BASE_DIR=${BASE_DIR:-${PWD%"Hadoop"*}"HadoopInitializer"}
 source $BASE_DIR"/conf_loader.sh"
 loadBasic;
-source $BASE_DIR"/tools/checker.sh"
-
-echo "root privilege is required to run this script."
+echo "Root privilege is required to run this script."
 check_permission 
-if [ $? -eq 0  ] 
+if [ $? -gt 0  ] 
 then 
-    echo "Permission Granted." 
-else 
     echo "Leaving..."
     exit 1
 fi

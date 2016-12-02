@@ -33,6 +33,10 @@ function loadBasic {
         source $conf
     done 
     source $BASE_DIR"/initializer.sh"
+    source $TOOLS_DIR"/highlighter.sh"
+    source $TOOLS_DIR"/root_checker.sh"
+    source $TOOLS_DIR"/ip_checker.sh"
+    source $TOOLS_DIR"/login.sh"
     update_local_IP
     update_env
 }

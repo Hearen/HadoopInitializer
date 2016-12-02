@@ -1,7 +1,9 @@
 #!/bin/bash
 ##########################
-# Author: LHearen 
-# E-mail: LHearen@126.com 
+# Author      : LHearen
+# E-mail      : LHearen@gmail.com
+# Time        : Thu, 2016-12-01 10:50
+# Description : Check the network connection and try to fix in ISCAS;
 ##########################
 
 # Using a given test site to check the network 
@@ -41,7 +43,9 @@ function login_network {
     return 1
 }
 
-# To separately use this script as a log-in script, just uncomment the following lines;
+# This log-in script is merely used for ISCAS log-in;
+# To directly use this script as a log-in script, 
+# Just uncomment the following lines;
 #clear
 #echo "Using a fixed account to login - simulating browser login process."
 #tput setaf 6

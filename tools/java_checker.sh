@@ -8,6 +8,9 @@
 #####################################################################################
 
 # Return 1 if not installed otherwise return 0;
+#
+# ToDo:
+# Utilize Expect to automate the password-input issue;
 function java_checker {
     ip=$1
     user_name=$2
@@ -28,4 +31,4 @@ function java_checker {
 #source $BASE_DIR"/conf_loader.sh"
 #loadBasic;
 #echo "loaded"
-#java_checker "133.133.135.37" "hadoop"
+#java_checker $LOCAL_IP_ADDRESS $USER_NAME

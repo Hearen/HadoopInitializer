@@ -44,17 +44,16 @@ function check_package {
 }
 
 # Uncomment the following lines to test this script directly;
-BASE_DIR=${BASE_DIR:-${PWD%"Hadoop"*}"HadoopInitializer"}
-source $BASE_DIR"/conf_loader.sh"
-loadBasic;
-source $TOOLS_DIR"/highlighter.sh"
-source $TOOLS_DIR"/root_checker.sh"
-echo "Essential parameters and scripts are loaded!"
-echo "root privilege is required to run this script."
-check_permission 
-if [ $? -gt 0  ] 
-then 
-    echo "Leaving..."
-    exit 1
-fi
-check_package "hadoop"
+#BASE_DIR=${BASE_DIR:-${PWD%"Hadoop"*}"HadoopInitializer"}
+#source $BASE_DIR"/conf_loader.sh"
+#loadBasic;
+#echo "Essential parameters and scripts are loaded!"
+#echo "root privilege is required to run this script."
+#check_permission 
+#if [ $? -gt 0  ] 
+#then 
+    #echo "Leaving..."
+    #exit 1
+#fi
+#check_package "hadoop" # Some packaged need to be installed manually
+#check_package "wget"

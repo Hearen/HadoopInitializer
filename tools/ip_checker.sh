@@ -32,6 +32,9 @@ function ip_checker {
     done
     return 0
 }
+
+# To directly run this script to check the validity of the IP addresses
+# Uncomment the following lines;
 #while true
 #do
     #read -p "Input the ip to test: " ip

@@ -5,8 +5,11 @@
 #Time        : Thu, 2016-05-05 14:46
 #Description : Used to logout from ISCAS internal network;
 #####################################################################################
-. login.sh
 
+# Used to log out the current account in ISCAS inner network;
+# Only the request will be sent as for the immediate effect
+# It will be determined by the gateway, in a word, the log-out 
+# Might not take effect as soon as the script being executed;
 function send_logout_request {
     t=$(date +%s)
     echo "Trying to send logout request..."
@@ -30,4 +33,9 @@ function logout_network {
     done
 }
 
-logout_network
+
+# Just uncomment the following lines;
+#BASE_DIR=${BASE_DIR:-${PWD%"Hadoop"*}"HadoopInitializer"}
+#source $BASE_DIR"/conf_loader.sh"
+#loadBasic;
+#logout_network

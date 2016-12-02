@@ -44,20 +44,20 @@ function check_fix_network {
 }
 
 # To execute the program directly, uncomment the following lines
-BASE_DIR=${BASE_DIR:-${PWD%"Hadoop"*}"HadoopInitializer"}
-source $BASE_DIR"/conf_loader.sh"
-loadBasic;
-source $TOOLS_DIR"/highlighter.sh"
-source $TOOLS_DIR"/root_checker.sh"
-source $TOOLS_DIR"/login.sh"
-echo "Essential parameters and scripts are loaded!"
-echo "Root privilege is required"
-check_permission 
-if [ $? -gt 0  ] 
-then 
-    echo "Leaving..."
-    exit 1
-fi
+#BASE_DIR=${BASE_DIR:-${PWD%"Hadoop"*}"HadoopInitializer"}
+#source $BASE_DIR"/conf_loader.sh"
+#loadBasic;
+#source $TOOLS_DIR"/highlighter.sh"
+#source $TOOLS_DIR"/root_checker.sh"
+#source $TOOLS_DIR"/login.sh"
+#echo "Essential parameters and scripts are loaded!"
+#echo "Root privilege is required"
+#check_permission 
+#if [ $? -gt 0  ] 
+#then 
+    #echo "Leaving..."
+    #exit 1
+#fi
 
-check_fix_network
+#check_fix_network
 

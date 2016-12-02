@@ -6,9 +6,12 @@
 # Description : Used to enable password-less ssh login among remotes;
 #-------------------------------------------
 
-#Hadoop user required;
-#Used to enable ssh-login to one another among hosts without password
-#IP addresses are provided in a file
+# Hadoop user required;
+# Used to enable ssh-login to one another among hosts without password
+# IP addresses are provided in a file
+#
+# ToDo:
+# Utilize Expect to automate the password-input issue;
 function enable_ssh_without_pwd {
     user_name=$1
     ips_file=$2
@@ -21,12 +24,6 @@ function enable_ssh_without_pwd {
     fi
     for localhost in $(cat $ips_file) #traverse each line of the file - each IP address;
     do
-        ip_checker $localhost
-        if [ $? -gt 0 ]
-        then
-            echo "Wrong IP, check the [$localhost] in $ips_file";
-            return 1
-        fi
         highlight_substr 6 "" "Generating rsa keys for [$localhost]" ""
         ssh -t $localhost "rm -rf ~/.ssh && ssh-keygen -t rsa && touch /home/$user_name/.ssh/authorized_keys && chmod 600 /home/$user_name/.ssh/authorized_keys" #-t is to force sudo command;
     done
@@ -46,11 +43,11 @@ function enable_ssh_without_pwd {
 }
 
 # To directly execute the script, uncomment the following lines;
-#BASE_DIR=${BASE_DIR:-${PWD%"Hadoop"*}"HadoopInitializer"}
-#source $BASE_DIR"/conf_loader.sh"
-#loadBasic;
-#source $TOOLS_DIR"/checker.sh"
-#source $TOOLS_DIR"/user_checker.sh"
-#source $TOOLS_DIR"/highlight_substr.sh"
-#enable_ssh_without_pwd $USER_NAME $IPS_FILE
+BASE_DIR=${BASE_DIR:-${PWD%"Hadoop"*}"HadoopInitializer"}
+source $BASE_DIR"/conf_loader.sh"
+loadBasic;
+source $TOOLS_DIR"/ip_checker.sh"
+source $TOOLS_DIR"/user_checker.sh"
+source $TOOLS_DIR"/highlighter.sh"
+enable_ssh_without_pwd $USER_NAME $IPS_FILE
 

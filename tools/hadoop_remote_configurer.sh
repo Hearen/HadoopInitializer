@@ -4,17 +4,21 @@
 #Author      : LHearen
 #E-mail      : LHearen@gmail.com
 #Time        : Thu, 2016-11-30 10:50
-#Description : Copy the configuration files to remotes;
+#Description : Copy the hadoop configuration files to remotes;
 #####################################################################################
 
 # Copy the customized Hadoop configuration files
 # To all the remotes to complete the cluster configuration
+#
+# ToDo:
+# Utilize Expect to automate the password-input issue;
 function copy_hadoop_configuration_files {
     highlight_str 6 "Start to copy hadoop configuration files to all remotes..." 
     for ip in $(cat $IPS_FILE)
     do
         highlight_str 6 "To [$ip]"
-        scp $HHADOOP_DIR"/*" $USER_NAME@$ip:$HADOOP_CONF # for hadoop 2.7.1 only;
+        sh -c "echo $HHADOOP_DIR'/*'"
+        scp $HHADOOP_DIR'/*' $USER_NAME@$ip:$HADOOP_CONF # for hadoop 2.7.1 only;
     done
 }
  
