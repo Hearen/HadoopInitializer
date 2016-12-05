@@ -43,11 +43,11 @@ function enable_ssh_without_pwd {
 }
 
 # To directly execute the script, uncomment the following lines;
-BASE_DIR=${BASE_DIR:-${PWD%"Hadoop"*}"HadoopInitializer"}
-source $BASE_DIR"/conf_loader.sh"
-loadBasic;
-source $TOOLS_DIR"/ip_checker.sh"
-source $TOOLS_DIR"/user_checker.sh"
-source $TOOLS_DIR"/highlighter.sh"
-enable_ssh_without_pwd $USER_NAME $IPS_FILE
+#BASE_DIR=${BASE_DIR:-${PWD%"Hadoop"*}"HadoopInitializer"}
+#source $BASE_DIR"/conf_loader.sh"
+#loadBasic;
+#source $TOOLS_DIR"/ip_checker.sh"
+#source $TOOLS_DIR"/user_checker.sh"
+#source $TOOLS_DIR"/highlighter.sh"
+#enable_ssh_without_pwd $USER_NAME $IPS_FILE
 

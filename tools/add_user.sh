@@ -30,7 +30,7 @@ function add_user {
 
 # To directly run this script to add a certain user for a cluster of remotes
 # Uncomment the following lines;
-BASE_DIR=${BASE_DIR:-${PWD%"Hadoop"*}"HadoopInitializer"}
+BASE_DIR=${BASE_DIR:-${PWD%"HadoopInitializer"*}"HadoopInitializer"}
 source $BASE_DIR"/conf_loader.sh"
 loadBasic;
 echo "Root privilege is required to run this script."

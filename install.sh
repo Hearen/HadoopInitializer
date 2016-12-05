@@ -7,18 +7,16 @@
 #description : used to configure hadoop cluster automatically.
 #####################################################################################
 
-source checker.sh
-if [ $? -gt 0 ]
-then
-    source ../checker.sh 2>/dev/null
-fi
+#-------------------------------------------
+# Author      : LHearen
+# E-mail      : LHearen@126.com
+# Time        : 2016-12-05 15:11
+# Description : Re-code the install part after a whole refactor;
+#-------------------------------------------
 
-source initializer.sh
-if [ $? -gt 0 ]
-then
-    source ../initializer.sh 2>/dev/null
-fi
-
+BASE_DIR=${BASE_DIR:-${PWD%"Hadoop"*}"HadoopInitializer"}
+source $BASE_DIR"/conf_loader.sh"
+loadBasic;
 clear
 tput setaf 1
 echo 

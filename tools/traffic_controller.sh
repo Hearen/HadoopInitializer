@@ -19,24 +19,24 @@ function throttle_interface {
 
 # To directly run this script to throttle a certain interface
 # Uncomment the following lines;
-BASE_DIR=${BASE_DIR:-${PWD%"Hadoop"*}"HadoopInitializer"}
-source $BASE_DIR"/conf_loader.sh"
-loadBasic;
-echo "Root privilege is required to run this script."
-check_permission 
-if [ $? -gt 0  ] 
-then 
-    echo "Leaving..."
-    exit 1
-fi
-#Ensure the network connection is okay;
-check_fix_network
-if [ $? -gt 0 ]
-then
-    echo "Leaving the program..."
-    exit 1
-fi
+#BASE_DIR=${BASE_DIR:-${PWD%"Hadoop"*}"HadoopInitializer"}
+#source $BASE_DIR"/conf_loader.sh"
+#loadBasic;
+#echo "Root privilege is required to run this script."
+#check_permission 
+#if [ $? -gt 0  ] 
+#then 
+    #echo "Leaving..."
+    #exit 1
+#fi
+##Ensure the network connection is okay;
+#check_fix_network
+#if [ $? -gt 0 ]
+#then
+    #echo "Leaving the program..."
+    #exit 1
+#fi
 
-read -p "Input the interface you intend to throttle: " interface
-highlighter_str 2 "You can utilize `ip a` or `ifconfig` to find out the interfaces"
-read -p "The maximum rate [unit: mbps]: " max
+#read -p "Input the interface you intend to throttle: " interface
+#highlighter_str 2 "You can utilize `ip a` or `ifconfig` to find out the interfaces"
+#read -p "The maximum rate [unit: mbps]: " max
