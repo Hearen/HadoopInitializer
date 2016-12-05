@@ -19,11 +19,12 @@ function user_checker {
     fi
 }
 
+#echo "user_checker loaded!"
 # To directly execute the script, uncomment the following lines;
-user_checker $1
-if [ $? -eq 0 ]
-then
-    echo "Match!"
-else
-    echo "Wrong user!"
-fi
+#user_checker $1
+#if [ $? -eq 0 ]
+#then
+    #echo "Match!"
+#else
+    #echo "Wrong user!"
+#fi

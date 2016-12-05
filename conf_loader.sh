@@ -11,12 +11,8 @@ ETC_DIR=$BASE_DIR"/etc"
 TOOLS_DIR=$BASE_DIR"/tools"
 
 function loadAll {
-    for conf in $ETC_DIR"/*"
-    do 
-        #echo $conf
-        source $conf
-    done 
-    for tool in $TOOLS_DIR"/*.sh";
+    source $ETC_DIR"/args.conf"
+    for tool in $TOOLS_DIR/*.sh;
     do
         #echo $tool;
         source $tool;
@@ -24,11 +20,7 @@ function loadAll {
 }
 
 function loadBasic {
-    for conf in $ETC_DIR"/*"
-    do 
-        #echo $conf
-        source $conf
-    done 
+    source $ETC_DIR"/args.conf"
     source $TOOLS_DIR"/highlighter.sh"
     source $TOOLS_DIR"/root_checker.sh"
     source $TOOLS_DIR"/ip_checker.sh"
@@ -38,5 +30,5 @@ function loadBasic {
 
 # For test only, uncomment the following lines;
 #loadAll;
-#./login.sh
+#login_network
 

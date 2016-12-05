@@ -27,7 +27,9 @@ function test_hadoop {
     tput sgr0
 }
 
-BASE_DIR=${BASE_DIR:-${PWD%"Hadoop"*}"HadoopInitializer"}
+BASE_DIR=${BASE_DIR:-${PWD%"HadoopInitializer"*}"HadoopInitializer"}
 source $BASE_DIR"/conf_loader.sh"
 loadAll
+
+echo $IPS_FILE
 test_hadoop $USER_NAME

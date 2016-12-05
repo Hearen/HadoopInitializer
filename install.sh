@@ -16,7 +16,7 @@
 
 BASE_DIR=${BASE_DIR:-${PWD%"Hadoop"*}"HadoopInitializer"}
 source $BASE_DIR"/conf_loader.sh"
-loadBasic;
+loadAll;
 clear
 tput setaf 1
 echo 
@@ -26,25 +26,21 @@ tput setaf 4
 echo
 echo
 echo "Via this program you can accomplish the following operations automatically:"
-echo "1. check the permission of the current role;"
-echo "2. check the network and try to fix it if not available;"
-echo "3. add working user, set its password and add it to sudoers for later sudo command;"
-echo "4. via a file containing all the IP addresses of the hosts to change the hostnames and then update /etc/hosts for all hosts;"
-echo "5. via a file containing all the IP addresses of the hosts to enable login via ssh without password among hosts in the cluster;"
-echo "6. download jdk 1.8 and configure java, javac and jre locally;"
-echo "7. download hadoop 2.7 and install it locally;"
-echo "8. via IP addresses of the hosts to configure and activate the newly java and hadoop environment variables;"
-echo "9. via IP addresses of the hosts to update the xml configuration files in hadoop for each host of the cluster;"
-echo "10. start hadoop in master node and check its status in each node in the cluster;"
+echo "#. Add a new working user, set password and enable sudo command;"
+echo "#. Change the hostnames and update /etc/hosts for all hosts;"
+echo "#. Achieve password-free ssh login among hosts in the cluster"
+echo "#. Install jdk 1.8 and configure java, javac and jre locally;"
+echo "#. Install hadoop 2.7;"
+echo "#. Configure hadoop;"
 echo 
 echo 
 tput sgr0
 
-echo "First time to run this program press [1] to install."
+echo "First time to run this program press [1]."
 echo "Copy hadoop configuration files for hadoop cluster press [2]"
-echo "To enable ssh-login-without-password, you have to sue to '$USER_NAME' first and now press [3]"
-echo "Run a simple test in working user '$USER_NAME' press [4]"
-echo "Press [q] to exit."
+echo "To achieve password-free ssh login, you have to ' su $USER_NAME' first and press [3]"
+echo "Run a simple test as the new working user '$USER_NAME' press [4]"
+echo "Press [q|Q] to exit."
 
 while [ 1 ]
 do
@@ -54,71 +50,41 @@ do
         echo
         echo "First we need to do some checking..."
 
-        #Ensure root privilege;
+        # Ensure root privilege;
         echo
         check_permission 
-        if [ $? -eq 0  ] 
+        if [ $? -gt 0  ] 
         then 
-            echo "Permission Granted." 
-        else 
-            echo "Permission Denied!" 
             exit 1
         fi
 
-        #Update env.conf
-        update_env
-
-        #Ensure the network connection is okay;
+        # Ensure the network connection is okay;
         echo
         check_fix_network
-        if [ $? -eq 0 ]
+        if [ $? -gt 0 ]
         then
-            echo "Connection Okay!"
-        else
-            echo "Failed to fix the connection."
-            echo "Leaving the program..."
             exit 1
         fi
 
-        #Ensure essential packages are installed - ssh and scp
+        # Ensure essential packages are installed - ssh and scp
         echo
         check_essential_packages
         if [ $? -gt 0 ]
         then 
-            echo "Leaving the program..."
+            exit 1
         fi
 
-        #Add the user for each host and meantime enable sudo command;
+        # Add the user for each host and meantime enable sudo command;
         echo
-        tput setaf 6
-        echo "Let's now add a user for each host in the cluster for later use."
-        tput sgr0
+        highlight_str 6 "Let's now add a user for each host in the cluster for later use."
         add_user $USER_NAME $IPS_FILE
-        if [ $? -gt 0 ]
-        then 
-            echo "Failed to add user!"
-            echo "Leaving the program..."
-            exit 1
-        fi
 
-        #Update the hostnames and synchronize the /etc/hosts among hosts;
-        tput setaf 6
-        echo
-        echo "Let's now set the hostname for each host and synchronise the /etc/hosts file among them."
-        echo "It's time to edit hostnames for all the hosts in the hadoop cluster."
-        tput sgr0
+        # Update the hostnames and synchronize the /etc/hosts among hosts;
+        highlight_str 6 "Let's now set the hostname for each host and synchronise the /etc/hosts file among them."
         edit_hosts $IPS_FILE $HOSTS_FILE
-        if [ $? -gt 0 ]
-        then 
-            echo "Failed to edit hostnames!"
-            echo "Leaving the program..."
-            exit 1
-        fi
 
-       #Download jdk1.8 and configure it locally;
-        tput setaf 6
-        echo "Let's start to download and install jdk1.8 locally..."
-        tput sgr0
+        # Download jdk1.8 and configure it locally;
+        highlight_str 6 "Let's start to download and install jdk1.8 locally..."
         install_jdk_local 
         if [ $? -gt 0 ]
         then
@@ -127,9 +93,7 @@ do
         fi
 
         #Download hadoop2.7 and configure it locally;
-        tput setaf 6
-        echo "Let's just download and install hadloop locally..."
-        tput sgr0
+        highlight_str 6 "Let's just download and install hadloop locally..."
         install_hadoop_local 
         if [ $? -gt 0 ]
         then
@@ -137,11 +101,9 @@ do
             exit 1
         fi
 
-        #After local installation and configuration
-        #Install and configure java and hadoop globally in the cluster;
-        tput setaf 6
-        echo "It's time to install and configure jdk1.8 and hadoop2.7 for all hosts in the cluster..."
-        tput sgr0
+        # After local installation and configuration
+        # Install and configure java and hadoop globally in the cluster;
+        highlight_str 6 "It's time to install and configure jdk1.8 and hadoop2.7 for all hosts in the cluster..."
         echo $USER_NAME $ENV_CONF_FILE $IPS_FILE 
         install_for_all_hosts $USER_NAME $ENV_CONF_FILE $IPS_FILE 
         exit 0
@@ -161,29 +123,19 @@ do
         fi
 
         copy_hadoop_configuration_files $IPS_FILE
-        tput setaf 1
-        echo "Done!"
-        tput sgr0
+        highlight_str 2 "Finished!"
         exit 0
         ;;
     3)
-        #Ensure ssh-login without password among hosts in the cluster;
-        tput setaf 6
-        echo
-        echo "Let's enable ssh-login without password among hosts."
-        tput sgr0
+        # Ensure ssh-login without password among hosts in the cluster;
+        highlight_str 6 "Let's enable ssh-login without password among hosts."
         enable_ssh_without_pwd $USER_NAME $IPS_FILE
-        tput setaf 4
-        echo "Let's test the installation"
-        tput sgr0
+        highlight_str 4 "Let's test the installation"
         test_hadoop $USER_NAME
         exit 0
         ;;
     4) 
-        tput setaf 4
-        echo
-        echo "Let's test the installation"
-        tput sgr0
+        highlight_str 4 "Let's test the installation"
         test_hadoop $USER_NAME
         exit 0
         ;;
