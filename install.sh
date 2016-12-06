@@ -1,12 +1,4 @@
 #!/bin/bash
-
-#####################################################################################
-#author      : lhearen
-#e-mail      : lhearen@gmail.com
-#time        : sun, 2016-05-08 09:48
-#description : used to configure hadoop cluster automatically.
-#####################################################################################
-
 #-------------------------------------------
 # Author      : LHearen
 # E-mail      : LHearen@126.com
@@ -16,6 +8,7 @@
 
 BASE_DIR=${BASE_DIR:-${PWD%"Hadoop"*}"HadoopInitializer"}
 source $BASE_DIR"/conf_loader.sh"
+source $BASE_DIR"/tester.sh"
 loadAll;
 clear
 tput setaf 1
@@ -46,7 +39,9 @@ while [ 1 ]
 do
     read -n1 -p "What's your choice: " choice
     case $choice in
-    1)
+    1) # First run - checking permission, network and essential packages
+       # Add a new user and modify the hostnames and hosts
+       # Install jdk and hadoop locally and then for all remotes
         echo
         echo "First we need to do some checking..."
 
@@ -74,6 +69,13 @@ do
             exit 1
         fi
 
+        # Ensure all the IPs in the cluster are valid
+        cluster_ip_checker 
+        if [ $? -gt 0 ]
+        then
+            exit 1
+        fi
+
         # Add the user for each host and meantime enable sudo command;
         echo
         highlight_str 6 "Let's now add a user for each host in the cluster for later use."
@@ -92,7 +94,7 @@ do
             exit 1
         fi
 
-        #Download hadoop2.7 and configure it locally;
+        # Download hadoop2.7 and configure it locally;
         highlight_str 6 "Let's just download and install hadloop locally..."
         install_hadoop_local 
         if [ $? -gt 0 ]
@@ -109,9 +111,9 @@ do
         exit 0
         ;;
 
-    2)
+    2) # Check permission and then configure hadoop by copy the configuration files
         echo
-        #Ensure root privilege;
+        # Ensure root privilege;
         echo
         check_permission 
         if [ $? -eq 0  ] 
@@ -126,7 +128,8 @@ do
         highlight_str 2 "Finished!"
         exit 0
         ;;
-    3)
+    3) # Activate the password-less ssh login and then start to test hadoop
+        echo
         # Ensure ssh-login without password among hosts in the cluster;
         highlight_str 6 "Let's enable ssh-login without password among hosts."
         enable_ssh_without_pwd $USER_NAME $IPS_FILE
@@ -134,7 +137,8 @@ do
         test_hadoop $USER_NAME
         exit 0
         ;;
-    4) 
+    4) # Test the hadoop
+        echo
         highlight_str 4 "Let's test the installation"
         test_hadoop $USER_NAME
         exit 0

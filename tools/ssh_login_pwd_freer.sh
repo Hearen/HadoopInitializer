@@ -32,7 +32,8 @@ function enable_ssh_without_pwd {
         for ip in $(cat $ips_file)
         do
             highlight_substr 6 "" "Copy rsa public key from [$localhost] to [$ip]" ""
-            ssh -t $localhost "ssh-copy-id -i ~/.ssh/id_rsa.pub $ip " ##enable the remote-host-ssh-login-local-without-password #option -t here is used to enable password required command;
+            $TOOLS_DIR"/copy_ssh_key.exp" $user_name $ip "onceas"
+            #ssh -t $localhost "ssh-copy-id -i ~/.ssh/id_rsa.pub $ip " ##enable the remote-host-ssh-login-local-without-password #option -t here is used to enable password required command;
             if [ $? -eq 0 ]
             then
                 highlight_substr 1 "" "You can ssh login [$ip] from [$localhost] without password now!" ""
@@ -43,11 +44,8 @@ function enable_ssh_without_pwd {
 }
 
 # To directly execute the script, uncomment the following lines;
-#BASE_DIR=${BASE_DIR:-${PWD%"Hadoop"*}"HadoopInitializer"}
-#source $BASE_DIR"/conf_loader.sh"
-#loadBasic;
-#source $TOOLS_DIR"/ip_checker.sh"
-#source $TOOLS_DIR"/user_checker.sh"
-#source $TOOLS_DIR"/highlighter.sh"
-#enable_ssh_without_pwd $USER_NAME $IPS_FILE
+BASE_DIR=${BASE_DIR:-${PWD%"Hadoop"*}"HadoopInitializer"}
+source $BASE_DIR"/conf_loader.sh"
+loadBasic;
+enable_ssh_without_pwd $USER_NAME $IPS_FILE
 

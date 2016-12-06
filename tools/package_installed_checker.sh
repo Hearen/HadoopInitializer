@@ -83,6 +83,11 @@ function check_essential_packages {
         return 1;
     fi
     return 0;
+    check_package "expect"
+    if [ $? -gt 0 ]
+    then 
+        return 1;
+    fi
 }
 
 # Uncomment the following lines to test this script directly;

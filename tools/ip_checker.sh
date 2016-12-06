@@ -33,8 +33,25 @@ function ip_checker {
     return 0
 }
 
+# Return 1 if a IP address provided is not valid otherwise 0
+# Used to ensure all the IP addresses provided is valid before further action
+function cluster_ip_checker {
+    for ip in $(cat $IPS_FILE)
+    do
+        highlight_str 2 "$ip"
+        ip_checker $ip
+        if [ $? -gt 0 ]
+        then
+            highlight_str 1 "$ip is not valid!"
+            return 1
+        fi
+    done
+    return 0
+}
+
 # To directly run this script to check the validity of the IP addresses
 # Uncomment the following lines;
+
 #while true
 #do
     #read -p "Input the ip to test: " ip
@@ -46,3 +63,16 @@ function ip_checker {
         #echo "Wrong!"
     #fi
 #done
+
+# To test the validity of the cluster IPs
+# Uncomment the following lines instead
+
+#BASE_DIR=${BASE_DIR:-${PWD%"HadoopInitializer"*}"HadoopInitializer"}
+#ETC_DIR=$BASE_DIR"/etc"
+#source $ETC_DIR"/args.conf"
+#source $TOOLS_DIR"/highlighter.sh"
+#cluster_ip_checker
+#if [ $? -eq 0 ]
+#then
+    #highlight_str 2 "All are valid!"
+#fi

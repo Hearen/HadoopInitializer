@@ -1,0 +1,5 @@
+#!/usr/bin/expect
+
+#spawn /bin/bash -c "ls ~"
+expect "hello"
+send " world"
