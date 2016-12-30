@@ -11,7 +11,7 @@
 # Return 0 as true otherwise 1 as false;
 function user_checker {
     user_name=$1
-    if [ "$user_name" != `echo "$USER"` ] || [ `id -u` -eq 0 ] 
+    if [ "$user_name" != `whoami` ]
     then
         return 1
     else

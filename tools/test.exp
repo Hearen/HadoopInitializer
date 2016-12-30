@@ -2,4 +2,6 @@
 
 #spawn /bin/bash -c "ls ~"
 expect "hello"
+expect "hello"
+expect "hello"
 send " world"

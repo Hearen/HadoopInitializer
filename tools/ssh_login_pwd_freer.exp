@@ -1,0 +1,45 @@
+#!/usr/bin/expect
+
+set user_name [lindex $argv 0]
+set password [lindex $argv 1]
+set client [lindex $argv 2]
+set server [lindex $argv 3]
+
+spawn ssh -t $user_name@$client 
+expect {
+    "yes/no" {
+        send "yes\r"
+        expect "password:" { send "$password\r" }
+    }
+    # already has public key in ~/.ssh/known_hosts
+    "password:" { send "$password\r" }
+}
+expect "$ " { send "ssh-keygen -t rsa\r" }
+expect "Enter" { send "\r" }
+expect {
+    # overwrite its existed fingerprint
+    "y/n" { 
+        send "y\r"
+        expect "passphrase " { send "\r" }
+        expect "Enter " { send "\r" }
+        expect "Enter " { send "\r" }
+    }
+    "passphrase " {
+        send "\r"
+        expect "passphrase " { send "\r" }
+        expect "Enter " { send "\r" }
+    }
+}
+expect "$ "
+send "ssh-copy-id -i ~/.ssh/id_rsa.pub $user_name@$server\r"
+expect {
+    "yes/no" {
+        send "yes\r"
+        expect "password:" { send "$password\r" }
+    }
+    # already has public key in ~/.ssh/known_hosts
+    "password:" { send "$password\r" }
+}
+
+send "exit\r"
+
