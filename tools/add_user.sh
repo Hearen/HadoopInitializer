@@ -8,9 +8,6 @@
 
 # Root privilege required
 # Add a new user and enable sudo command for each host in the cluster;
-#
-# ToDo:
-# Utilize Expect to automate the password-input issue
 function add_user {
     user_name=$1
     ips_file=$2

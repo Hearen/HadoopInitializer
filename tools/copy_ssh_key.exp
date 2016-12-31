@@ -1,14 +1,23 @@
 #!/usr/bin/expect
+#-------------------------------------------
+# Author      : LHearen
+# E-mail      : LHearen@126.com
+# Time        : Sat Dec 31 11:13:20 CST 2016
+# Description : Copy the ssh id_rsa.pub from one remote to another
+#               Using Expect to automate the interactive process.
+#               Root and regular users are all enabled.
+#-------------------------------------------
 
+# Used to ouput debugging info
 #exp_internal 1
 set user_name [lindex $argv 0]
 set password [lindex $argv 1]
 set client [lindex $argv 2]
 set server [lindex $argv 3]
 
-set timeout -1
+#set timeout -1
 spawn ssh -t $user_name@$client 
-expect  {
+expect {
     # first connection, no public key in ~/.ssh/known_hosts
     "yes/no" {
         send -- "yes\r"
@@ -19,12 +28,19 @@ expect  {
         send -- "$password\r" 
     }
 }
-expect "$ "
-send -- "ssh-copy-id -i ~/.ssh/id_rsa.pub $user_name@$server\r"
+expect {
+    "$ " { send -- "ssh-copy-id -i ~/.ssh/id_rsa.pub $user_name@$server\r" }
+    "# "{ send -- "ssh-copy-id -i ~/.ssh/id_rsa.pub $user_name@$server\r" }
+}
 expect  {
     "yes/no" {
         send -- "yes\r"
         exp_continue
     }
-    "password:" { send -- "$password\r" }
+    "password:" { 
+        send -- "$password\r" 
+        exp_continue
+    }
+    "$ " { send "exit\r" }
+    "# " { send "exit\r" }
 }

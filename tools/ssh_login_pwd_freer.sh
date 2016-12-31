@@ -14,7 +14,8 @@
 # Utilize Expect to automate the password-input issue;
 function enable_ssh_without_pwd {
     user_name=$1
-    ips_file=$2
+    password=$2
+    ips_file=$3
     user_checker $user_name
     if [ $? -gt 0 ]
     then 
@@ -25,21 +26,22 @@ function enable_ssh_without_pwd {
     for localhost in $(cat $ips_file) #traverse each line of the file - each IP address;
     do
         highlight_substr 6 "" "Generating rsa keys for [$localhost]" ""
-        ssh -t $localhost "rm -rf ~/.ssh && ssh-keygen -t rsa && touch /home/$user_name/.ssh/authorized_keys && chmod 600 /home/$user_name/.ssh/authorized_keys" #-t is to force sudo command;
+        $TOOLS_DIR"/pwd_free_ssh_generator.exp" $user_name $password $localhost
     done
     for localhost in $(cat $ips_file)
     do
         for ip in $(cat $ips_file)
         do
             highlight_substr 6 "" "Copy rsa public key from [$localhost] to [$ip]" ""
-            $TOOLS_DIR"/copy_ssh_key.exp" $user_name $ip "onceas"
-            #ssh -t $localhost "ssh-copy-id -i ~/.ssh/id_rsa.pub $ip " ##enable the remote-host-ssh-login-local-without-password #option -t here is used to enable password required command;
+            $TOOLS_DIR"/copy_ssh_key.exp" $user_name $password $localhost $ip
+            echo 
             if [ $? -eq 0 ]
             then
                 highlight_substr 1 "" "You can ssh login [$ip] from [$localhost] without password now!" ""
             fi
         done
     done
+    highlight_str 2 "All the hosts in the cluster can log in one another without password!"
     return 0
 }
 
@@ -47,5 +49,5 @@ function enable_ssh_without_pwd {
 BASE_DIR=${BASE_DIR:-${PWD%"Hadoop"*}"HadoopInitializer"}
 source $BASE_DIR"/conf_loader.sh"
 loadBasic;
-enable_ssh_without_pwd $USER_NAME $IPS_FILE
+enable_ssh_without_pwd $USER_NAME $PASSWORD $IPS_FILE
 

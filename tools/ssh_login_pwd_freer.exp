@@ -1,45 +1,58 @@
 #!/usr/bin/expect
+#-------------------------------------------
+# Author      : LHearen
+# E-mail      : LHearen@126.com
+# Time        : Sat Dec 31 11:13:20 CST 2016
+# Description : Enable password-free ssh login from the client to the server;
+#               Using Expect to automate the interactive process.
+#               Root and regular users are all enabled.
+#-------------------------------------------
 
 set user_name [lindex $argv 0]
 set password [lindex $argv 1]
 set client [lindex $argv 2]
 set server [lindex $argv 3]
 
+#exp_internal 1
 spawn ssh -t $user_name@$client 
 expect {
     "yes/no" {
         send "yes\r"
-        expect "password:" { send "$password\r" }
+        exp_continue
     }
     # already has public key in ~/.ssh/known_hosts
     "password:" { send "$password\r" }
 }
-expect "$ " { send "ssh-keygen -t rsa\r" }
+expect {
+    "$ " { send "ssh-keygen -t rsa\r" }
+    "# " { send "ssh-keygen -t rsa\r" }
+}
 expect "Enter" { send "\r" }
 expect {
     # overwrite its existed fingerprint
     "y/n" { 
         send "y\r"
-        expect "passphrase " { send "\r" }
-        expect "Enter " { send "\r" }
-        expect "Enter " { send "\r" }
+        exp_continue
     }
     "passphrase " {
         send "\r"
         expect "passphrase " { send "\r" }
-        expect "Enter " { send "\r" }
     }
 }
-expect "$ "
-send "ssh-copy-id -i ~/.ssh/id_rsa.pub $user_name@$server\r"
+# the white space after the pattern is essential
 expect {
-    "yes/no" {
-        send "yes\r"
-        expect "password:" { send "$password\r" }
-    }
-    # already has public key in ~/.ssh/known_hosts
-    "password:" { send "$password\r" }
+    "$ " { send -- "ssh-copy-id -i ~/.ssh/id_rsa.pub $user_name@$server\r" }
+    "# " { send -- "ssh-copy-id -i ~/.ssh/id_rsa.pub $user_name@$server\r" }
 }
-
-send "exit\r"
-
+expect  {
+    "yes/no" {
+        send -- "yes\r"
+        exp_continue
+    }
+    "password:" { 
+        send -- "$password\r" 
+        exp_continue
+    }
+    "$ " { send "exit\r" }
+    "# " { send "exit\r" }
+}
