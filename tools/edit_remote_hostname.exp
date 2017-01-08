@@ -3,16 +3,15 @@
 # Author      : LHearen
 # E-mail      : LHearen@126.com
 # Time        : Sat Dec 31 11:13:20 CST 2016
-# Description : Generate the ssh id_rsa.pub;
-#               Using Expect to automate the interactive process.
-#               Root and regular users are all enabled.
+# Description : Edit the hostname of the remote;
+#               Using Expect to automate the interactive process;
 #-------------------------------------------
 
-set user_name [lindex $argv 0]
+set remote [lindex $argv 0]
 set password [lindex $argv 1]
-set client [lindex $argv 2]
+set hostname [lindex $argv 2]
 
-spawn ssh -t $user_name@$client "ssh-keygen -t rsa" 
+spawn ssh -t $remote "hostnamectl set-hostname $hostname --static" 
 expect {
     "yes/no" {
         send "yes\r"
@@ -22,17 +21,6 @@ expect {
     # already has public key in ~/.ssh/known_hosts
     "password:" { send "$password\r" }
 }
-expect "Enter" { send "\r" }
-expect {
-    "y/n" { 
-        send "y\r"
-        exp_continue
-    }
-    "passphrase " { send "\r" }
-}
-expect "passphrase " { send "\r" }
 # the last statement is critical to ensure the script ends right;
-expect {
-    "$ " { send "exit\r" }
-    "# " { send "exit\r" }
-}
+#expect { "# " { send "exit\r" } }
+

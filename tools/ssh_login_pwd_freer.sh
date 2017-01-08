@@ -41,13 +41,15 @@ function enable_ssh_without_pwd {
             fi
         done
     done
+    echo
+    tput bold
     highlight_str 2 "All the hosts in the cluster can log in one another without password!"
     return 0
 }
 
 # To directly execute the script, uncomment the following lines;
-BASE_DIR=${BASE_DIR:-${PWD%"Hadoop"*}"HadoopInitializer"}
-source $BASE_DIR"/conf_loader.sh"
-loadBasic;
-enable_ssh_without_pwd $USER_NAME $PASSWORD $IPS_FILE
+#BASE_DIR=${BASE_DIR:-${PWD%"Hadoop"*}"HadoopInitializer"}
+#source $BASE_DIR"/conf_loader.sh"
+#loadBasic;
+#enable_ssh_without_pwd $USER_NAME $PASSWORD $IPS_FILE
 

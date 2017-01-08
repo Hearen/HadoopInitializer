@@ -16,7 +16,7 @@ function add_user {
     for ip in $(cat $ips_file)
     do
         echo "Adding user [$user_name] for $ip"
-        $TOOL_DIR"/add_user.exp" $ip $user_name
+        $TOOLS_DIR"/add_user.exp" $ip $user_name
         #ssh $ip "useradd $user_name && passwd $user_name && usermod -aG wheel $user_name"
         if [ $? -gt 0 ] # in case there is an error
         then
@@ -30,15 +30,15 @@ function add_user {
 
 # To directly run this script to add a certain user for a cluster of remotes
 # Uncomment the following lines;
-BASE_DIR=${BASE_DIR:-${PWD%"HadoopInitializer"*}"HadoopInitializer"}
-source $BASE_DIR"/conf_loader.sh"
-loadBasic;
-echo "Root privilege is required to run this script."
-check_permission 
-if [ $? -gt 0  ] 
-then 
-    echo "Leaving..."
-    exit 1
-fi
+#BASE_DIR=${BASE_DIR:-${PWD%"HadoopInitializer"*}"HadoopInitializer"}
+#source $BASE_DIR"/conf_loader.sh"
+#loadBasic;
+#echo "Root privilege is required to run this script."
+#check_permission 
+#if [ $? -gt 0  ] 
+#then 
+    #echo "Leaving..."
+    #exit 1
+#fi
 
-add_user $USER_NAME $IPS_FILE
+#add_user $USER_NAME $IPS_FILE

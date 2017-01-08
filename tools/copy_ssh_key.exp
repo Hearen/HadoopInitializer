@@ -30,7 +30,7 @@ expect {
 }
 expect {
     "$ " { send -- "ssh-copy-id -i ~/.ssh/id_rsa.pub $user_name@$server\r" }
-    "# "{ send -- "ssh-copy-id -i ~/.ssh/id_rsa.pub $user_name@$server\r" }
+    "# " { send -- "ssh-copy-id -i ~/.ssh/id_rsa.pub $user_name@$server\r" }
 }
 expect  {
     "yes/no" {

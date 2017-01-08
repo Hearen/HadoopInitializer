@@ -1,0 +1,27 @@
+#!/usr/bin/expect
+#-------------------------------------------
+# Author      : LHearen
+# E-mail      : LHearen@126.com
+# Time        : Sat Dec 31 11:13:20 CST 2016
+# Description : Copy the new hosts file to the remote;
+#               Using Expect to automate the interactive process;
+#-------------------------------------------
+
+set hosts_file [lindex $argv 0]
+set remote [lindex $argv 1]
+set password [lindex $argv 2]
+
+spawn scp $hosts_file $remote 
+expect {
+    "yes/no" {
+        send "yes\r"
+        # try another time for the current expect statement;
+        exp_continue
+    }
+    # already has public key in ~/.ssh/known_hosts
+    "password:" { send "$password\r" }
+}
+# the last statement is critical to ensure the script ends right;
+#expect { "# " { send "exit\r" } }
+
+

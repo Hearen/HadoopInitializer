@@ -83,7 +83,7 @@ do
 
         # Update the hostnames and synchronize the /etc/hosts among hosts;
         highlight_str 6 "Let's now set the hostname for each host and synchronise the /etc/hosts file among them."
-        edit_hosts $IPS_FILE $HOSTS_FILE
+        edit_hosts $IPS_FILE $PASSWORD $HOSTS_FILE
 
         # Download jdk1.8 and configure it locally;
         highlight_str 6 "Let's start to download and install jdk1.8 locally..."

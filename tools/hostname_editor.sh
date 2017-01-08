@@ -13,12 +13,10 @@
 # Then update all the hosts accordingly overwriting the /etc/hosts file
 # Besides, to further ease the configuring burden, this script will also 
 # Automatically update the hadoop configuration file - slaves
-#
-# ToDo:
-# Utilize Expect to automate the password-input issue;
 function edit_hosts {
     ips_file=$1
-    hosts_file=$2
+    password=$2
+    hosts_file=$3
     count=0
     rm -rf $hosts_file 
     for ip in $(cat $ips_file)
@@ -39,7 +37,8 @@ function edit_hosts {
         count=$[count+1]
         echo "$ip $hostname" >> $hosts_file
         highlight_substr 2 "Update the hostname of [" "$ip" "] to $hostname"
-        ssh $ip hostnamectl set-hostname $hostname --static
+        $TOOLS_DIR"/edit_remote_hostname.exp" $ip $password $hostname
+        #ssh $ip hostnamectl set-hostname $hostname --static
     done
     echo
     highlight_str 6 "Start to replace /etc/hosts for each host in the cluster..."
@@ -65,4 +64,4 @@ function edit_hosts {
     #echo "Leaving..."
     #exit 1
 #fi
-#edit_hosts $IPS_FILE $HOSTS_FILE
+#edit_hosts $IPS_FILE $PASSWORD $HOSTS_FILE
