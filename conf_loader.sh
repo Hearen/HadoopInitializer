@@ -24,6 +24,7 @@ function loadBasic {
     source $TOOLS_DIR"/highlighter.sh"
     source $TOOLS_DIR"/root_checker.sh"
     source $TOOLS_DIR"/ip_checker.sh"
+    #source $TOOLS_DIR"/java_checker.sh"
     source $TOOLS_DIR"/user_checker.sh"
     source $TOOLS_DIR"/login.sh"
 }

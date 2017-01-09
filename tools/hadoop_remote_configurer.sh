@@ -17,28 +17,23 @@ function copy_hadoop_configuration_files {
     for ip in $(cat $IPS_FILE)
     do
         highlight_str 6 "To [$ip]"
-        sh -c "echo $HHADOOP_DIR'/*'"
-        scp $HHADOOP_DIR'/*' $USER_NAME@$ip:$HADOOP_CONF # for hadoop 2.7.1 only;
+        for xml_file in "$HADOOP_CONF_DIR"/*;
+        do 
+            $TOOLS_DIR"/copy_local_file.exp" "$xml_file" $USER_NAME@$ip:$HADOOP_CONF"/";
+        done
     done
 }
  
 
 # To execute the program directly, uncomment the following lines
-#BASE_DIR=${BASE_DIR:-${PWD%"Hadoop"*}"HadoopInitializer"}
-#source $BASE_DIR"/conf_loader.sh"
-#loadBasic;
-#source $TOOLS_DIR"/highlighter.sh"
-#source $TOOLS_DIR"/root_checker.sh"
-#echo "Essential parameters and scripts are loaded!"
-#echo "root privilege is required to run this script."
+BASE_DIR=${BASE_DIR:-${PWD%"Hadoop"*}"HadoopInitializer"}
+source $BASE_DIR"/conf_loader.sh"
+loadBasic;
 #check_permission 
-#if [ $? -eq 0  ] 
+#if [ $? -gt 0  ] 
 #then 
-    #echo "Permission Granted." 
-#else 
     #echo "Leaving..."
     #exit 1
 #fi
-
-#copy_hadoop_configuration_files;
+copy_hadoop_configuration_files
 

@@ -46,6 +46,8 @@ function cluster_ip_checker {
             return 1
         fi
     done
+    tput bold
+    highlight_str 2 "All IPs in the cluster are valid!"
     return 0
 }
 

@@ -16,7 +16,7 @@ function java_checker {
     user_name=$2
     ret=$(ssh $user_name@$ip "java -version; $JDK_FILE/bin/java -version" 2>&1 | sed -n "/1.8/p")
     echo $ret
-    if [ "$ret" == "" ]
+    if [ "$ret" == "" ] || [[ "$ret" =~ "No" ]]
     then
         echo "java 1.8 not installed"
         return 1
@@ -31,4 +31,4 @@ function java_checker {
 #source $BASE_DIR"/conf_loader.sh"
 #loadBasic;
 #echo "loaded"
-#java_checker $LOCAL_IP_ADDRESS $USER_NAME
+#java_checker $1 $USER_NAME

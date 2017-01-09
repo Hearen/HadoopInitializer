@@ -3,15 +3,16 @@
 # Author      : LHearen
 # E-mail      : LHearen@126.com
 # Time        : Sat Dec 31 11:13:20 CST 2016
-# Description : Copy the new hosts file to the remote;
+# Description : Copy the local file to the remote;
 #               Using Expect to automate the interactive process;
 #-------------------------------------------
 
-set hosts_file [lindex $argv 0]
-set remote [lindex $argv 1]
+set local_file [lindex $argv 0]
+set user_name [lindex $argv 1]
 set password [lindex $argv 2]
-
-spawn scp $hosts_file $remote 
+set remote_dir [lindex $argv 3]
+#exp_internal 1
+spawn scp $local_file $user_name@$remote_dir
 expect {
     "yes/no" {
         send "yes\r"
@@ -21,7 +22,9 @@ expect {
     # already has public key in ~/.ssh/known_hosts
     "password:" { send "$password\r" }
 }
-# the last statement is critical to ensure the script ends right;
-#expect { "# " { send "exit\r" } }
 
+#expect {
+    #"#" { send "\r" }
+    #"$" { send "\r" }
+#}
 

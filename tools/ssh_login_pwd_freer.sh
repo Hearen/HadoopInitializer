@@ -48,8 +48,8 @@ function enable_ssh_without_pwd {
 }
 
 # To directly execute the script, uncomment the following lines;
-#BASE_DIR=${BASE_DIR:-${PWD%"Hadoop"*}"HadoopInitializer"}
-#source $BASE_DIR"/conf_loader.sh"
-#loadBasic;
-#enable_ssh_without_pwd $USER_NAME $PASSWORD $IPS_FILE
+BASE_DIR=${BASE_DIR:-${PWD%"Hadoop"*}"HadoopInitializer"}
+source $BASE_DIR"/conf_loader.sh"
+loadBasic;
+enable_ssh_without_pwd $USER_NAME $PASSWORD $IPS_FILE
 

@@ -3,11 +3,11 @@
 # Author      : LHearen
 # E-mail      : LHearen@126.com
 # Time        : 2016-11-29 09:27
-# Description : Checking the current user and ensure it's not in root mode;
+# Description : Checking whether the current working user is the user provided by user_name;
 #-------------------------------------------
 
-# If the current user has the same name and 
-# Does not su to the root -- root is excluded
+# Check whether the current working user
+# Is the user_name or not;
 # Return 0 as true otherwise 1 as false;
 function user_checker {
     user_name=$1

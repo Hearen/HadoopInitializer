@@ -5,7 +5,13 @@ set ip [lindex $argv 0]
 set user_name [lindex $argv 1]
 
 spawn ssh $ip "useradd $user_name && passwd $user_name && usermod -aG wheel $user_name"
-expect "password:" {send "onceas\r"}
+expect {
+    "yes/no" {
+        send "yes\r"
+        exp_continue
+    }
+    "password:" { send "onceas\r" }
+}
 expect "password:" {send "onceas\r"}
 expect "password:" {send "onceas\r"}
 interact
