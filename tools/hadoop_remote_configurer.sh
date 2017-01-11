@@ -9,17 +9,12 @@
 
 # Copy the customized Hadoop configuration files
 # To all the remotes to complete the cluster configuration
-#
-# ToDo:
-# Utilize Expect to automate the password-input issue;
 function copy_hadoop_configuration_files {
     highlight_str 6 "Start to copy hadoop configuration files to all remotes..." 
-    for ip in $(cat $IPS_FILE)
-    do
+    for ip in $(cat $IPS_FILE); do
         highlight_str 6 "To [$ip]"
-        for xml_file in "$HADOOP_CONF_DIR"/*;
-        do 
-            $TOOLS_DIR"/copy_local_file.exp" "$xml_file" $USER_NAME@$ip:$HADOOP_CONF"/";
+        for xml_file in "$HADOOP_CONF_DIR"/*; do 
+            $TOOLS_DIR"/copy_local_file.exp" "$xml_file" $USER_NAME $PASSWORD $ip "$HADOOP_CONF"
         done
     done
 }

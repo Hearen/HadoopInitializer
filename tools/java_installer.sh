@@ -9,13 +9,10 @@
 
 # Root privilege required
 # Download jdk1.8 and configure java, javac and jre;
-# 
-# wget and tar is required
 function install_jdk_local {
-    java_checker
-    if [ $? -gt 0 ]
+    if [ ! -d "$JDK_FILE " ]
     then
-        if [ -f $JDK_ORIGINAL_FILE ]
+        if [ -f "$JDK_ORIGINAL_FILE" ]
         then
             echo "$JDK_ORIGINAL_FILE already exists, needless to download."
         else
@@ -26,15 +23,15 @@ function install_jdk_local {
                 return 1
             fi
         fi
-        tar xzf $JDK_ORIGINAL_FILE -C $JDK_UNZIPPED_DIR
+        tar -zxvf $JDK_ORIGINAL_FILE -C $USER_HOME && mv $JDK_SOURCE_FILE $JDK_FILE
         echo "Configuring jdk now..."
-        alternatives --install /usr/bin/java java /opt/jdk1.8.0_77/bin/java 2
+        alternatives --install /usr/bin/java java $JDK_FILE/bin/java 2
         alternatives --config java
         echo "Configuring jar and javac now..."
-        alternatives --install /usr/bin/jar jar /opt/jdk1.8.0_77/bin/jar 2
-        alternatives --install /usr/bin/javac javac /opt/jdk1.8.0_77/bin/javac 2
-        alternatives --set jar /opt/jdk1.8.0_77/bin/jar
-        alternatives --set javac /opt/jdk1.8.0_77/bin/javac
+        alternatives --install /usr/bin/jar jar $JDK_FIL/bin/jar 2
+        alternatives --install /usr/bin/javac javac $JDK_FILE/bin/javac 2
+        alternatives --set jar $JDK_FILE/bin/jar
+        alternatives --set javac $JDK_FILE/bin/javac
         echo
         echo "Java installation completed!"
         echo "Now, you may check by 'java -version'"
@@ -43,4 +40,7 @@ function install_jdk_local {
 }
 
 # To execute the program directly, uncomment the following lines
-#install_jdk_local
+BASE_DIR=${BASE_DIR:-${PWD%"HadoopInitializer"*}"HadoopInitializer"}
+source $BASE_DIR"/conf_loader.sh"
+loadBasic;
+install_jdk_local

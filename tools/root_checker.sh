@@ -13,7 +13,6 @@ function check_permission {
     then
         echo
         echo "Permission denied!"
-        echo "To run this program successfully "
         echo "Try to use root account or sudo command."
         return 1
     else

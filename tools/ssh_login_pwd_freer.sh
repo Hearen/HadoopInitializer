@@ -16,6 +16,11 @@ function enable_ssh_without_pwd {
     user_name=$1
     password=$2
     ips_file=$3
+    echo
+    tput bold
+    highlight_str 4 "The whole process might take few minutes to finish."
+    highlight_str 4 "Before the final bold prompt, do not stop it manually!"
+    echo 
     user_checker $user_name
     if [ $? -gt 0 ]
     then 
@@ -51,5 +56,5 @@ function enable_ssh_without_pwd {
 BASE_DIR=${BASE_DIR:-${PWD%"Hadoop"*}"HadoopInitializer"}
 source $BASE_DIR"/conf_loader.sh"
 loadBasic;
-enable_ssh_without_pwd $USER_NAME $PASSWORD $IPS_FILE
+enable_ssh_without_pwd $1 $2 $IPS_FILE
 

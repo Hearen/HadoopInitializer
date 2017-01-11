@@ -4,13 +4,12 @@
 #Author      : LHearen
 #E-mail      : LHearen@gmail.com
 #Time        : Thu, 2016-11-29 15:39
-#Description : Check whether jdk 1.8 installed in remotes or not
+#Description : Check whether jdk 1.8 is usable for the working user in remotes or not
 #####################################################################################
 
 # Return 1 if not installed otherwise return 0;
-#
-# ToDo:
-# Utilize Expect to automate the password-input issue;
+# Checking the usable java for the working user;
+# Not compatible with hadoop;
 function java_checker {
     ip=$1
     user_name=$2

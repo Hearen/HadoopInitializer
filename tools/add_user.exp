@@ -1,8 +1,16 @@
 #!/usr/bin/expect
+#-------------------------------------------
+# Author      : LHearen
+# E-mail      : LHearen@126.com
+# Time        : Sat Dec 31 11:13:20 CST 2016
+# Description : Add a user for the remote and set its password too;
+#-------------------------------------------
+
 
 set timeout 20
 set ip [lindex $argv 0]
 set user_name [lindex $argv 1]
+set password [lindex $argv 2]
 
 spawn ssh $ip "useradd $user_name && passwd $user_name && usermod -aG wheel $user_name"
 expect {
@@ -10,9 +18,8 @@ expect {
         send "yes\r"
         exp_continue
     }
-    "password:" { send "onceas\r" }
+    "password:" { send "$password\r" }
 }
-expect "password:" {send "onceas\r"}
-expect "password:" {send "onceas\r"}
-interact
+expect "password:" {send "$password\r"}
+expect "password:" {send "$password\r"}
 

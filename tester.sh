@@ -17,14 +17,12 @@ function test_hadoop {
         highlight_substr 2 "You can use" " su $USER_NAME " "to achieve this and then re-try."
         return 1
     fi
-    tput setaf 6
-    echo "Trying to start the hadoop..."
-    tput sgr0
+    highlight_str 6 "First format the HDFS..."
+    hadoop namenode -format
+    highlight_str 6 "Trying to start the hadoop..."
     start-all.sh
-    tput setaf 6
-    echo "Checking the service..."
+    highlight_str 6 "Checking the service..."
     jps
-    tput sgr0
 }
 
 #BASE_DIR=${BASE_DIR:-${PWD%"HadoopInitializer"*}"HadoopInitializer"}

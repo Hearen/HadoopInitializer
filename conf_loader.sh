@@ -27,6 +27,8 @@ function loadBasic {
     #source $TOOLS_DIR"/java_checker.sh"
     source $TOOLS_DIR"/user_checker.sh"
     source $TOOLS_DIR"/login.sh"
+    source $TOOLS_DIR"/remote_directory_checker.sh"
+    #source $TOOLS_DIR"/hadoop_remote_configurer.sh"
 }
 
 # For test only, uncomment the following lines;

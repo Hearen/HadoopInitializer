@@ -52,14 +52,14 @@ function edit_hosts {
 
 # To directly run this script to add a certain user for a cluster of remotes
 # Uncomment the following lines;
-BASE_DIR=${BASE_DIR:-${PWD%"Hadoop"*}"HadoopInitializer"}
-source $BASE_DIR"/conf_loader.sh"
-loadBasic;
-echo "Root privilege is required to run this script."
-check_permission 
-if [ $? -gt 0  ] 
-then 
-    echo "Leaving..."
-    exit 1
-fi
-edit_hosts $IPS_FILE $PASSWORD $HOSTS_FILE
+#BASE_DIR=${BASE_DIR:-${PWD%"Hadoop"*}"HadoopInitializer"}
+#source $BASE_DIR"/conf_loader.sh"
+#loadBasic;
+#echo "Root privilege is required to run this script."
+#check_permission 
+#if [ $? -gt 0  ] 
+#then 
+    #echo "Leaving..."
+    #exit 1
+#fi
+#edit_hosts $IPS_FILE $PASSWORD $HOSTS_FILE

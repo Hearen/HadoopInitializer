@@ -1,0 +1,43 @@
+#!/bin/expect -f
+
+#-------------------------------------------
+# Author      : LHearen
+# E-mail      : LHearen@126.com
+# Time        : Wed Jan 11 03:00:07 CST 2017
+# Description : Append the local file to the remote file;
+#               No matter what the current user is (root or regular user);
+#               No matter the password-less ssh login is enabled or not;
+#               No matter the remote is a known host or not;
+#-------------------------------------------
+
+set local_file [lindex $argv 0]
+set password [lindex $argv 1]
+set ip [lindex $argv 2]
+set remote_file [lindex $argv 3]
+
+set timeout -1
+
+#exp_internal 1
+spawn $env(SHELL)
+match_max 100000
+expect {
+    "$ " { send -- "cat $local_file | ssh root@$ip \"cat >> $remote_file\"\r" }
+    "# " { send -- "cat $local_file | ssh root@$ip \"cat >> $remote_file\"\r" }
+}
+
+expect {
+    "yes/no" { 
+        send "yes\r"
+        exp_continue
+    }
+    "password: " {
+        send -- "$password\r"
+    }
+    "$ " { send "\r" }
+    "# " { send "\r" }
+}
+expect {
+ "$ " { send -- "exit\r" }
+ "# " { send -- "exit\r" }
+}
+expect eof

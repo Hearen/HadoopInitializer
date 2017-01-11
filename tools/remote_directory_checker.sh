@@ -8,9 +8,12 @@
 
 # Return 0 if the directory exists in the remote host
 # Otherwise return 1;
+# 
+# After password-less ssh-login enabled, there is no need
+# To input password again.
 function remote_directory_checker {
-    ip=$1
-    user_name=$2
+    user_name=$1
+    ip=$2
     remote_dir=$3
     if (ssh $user_name@$ip "[ -d "$remote_dir"  ]")
     then
